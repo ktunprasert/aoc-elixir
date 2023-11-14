@@ -7,9 +7,9 @@ iex(1)> Aoc.Y2020.D1.run
 Part 1: 926464
 Part 2: 65656536
 :ok
-iex(2)> Aoc.Y2020.D1.run_part1
+iex(2)> Aoc.Y2020.D1.run 1
 926464
-iex(3)> Aoc.Y2020.D1.run_part2
+iex(3)> Aoc.Y2020.D1.run 2
 65656536
 ```
 
