@@ -15,6 +15,9 @@ defmodule Aoc.Runner do
         :ok
       end
 
+      def run(1), do: run_part1()
+      def run(2), do: run_part2()
+
       def run_part1() do
         part1(get_input(1))
       end
