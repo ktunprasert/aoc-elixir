@@ -16,6 +16,10 @@ defmodule AocTest.Y2020.D1 do
     test "part 1" do
       assert D1.part1(@example) == 514_579
     end
+
+    test "part 2" do
+      assert D1.part2(@example) == 241_861_950
+    end
   end
 
   test "Part 1" do
