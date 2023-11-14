@@ -14,8 +14,8 @@ defmodule AocTest.Y2020.D2 do
       assert Solver.part1(@example) == 2
     end
 
-    # test "part 2" do
-    #   assert D1.part2(@example) == 241_861_950
-    # end
+    test "part 2" do
+      assert Solver.part2(@example) == 1
+    end
   end
 end

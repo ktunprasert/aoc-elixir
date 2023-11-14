@@ -17,7 +17,15 @@ defmodule Aoc.Y2020.D2 do
   end
 
   def part2(input) do
-    :ok
+    lines = helper(input)
+
+    for [times, <<char, ":">>, password] <- lines |> Enum.map(&String.split(&1, " ")) do
+      [min, max] = times |> String.split("-") |> Enum.map(&String.to_integer/1)
+
+      chars = password |> String.to_charlist()
+      [Enum.at(chars, min - 1), Enum.at(chars, max - 1)] |> Enum.count(&(&1 == char)) == 1
+    end
+    |> Enum.count(& &1)
   end
 
   def helper(input) do
