@@ -1,9 +1,17 @@
 defmodule Aoc.Runner do
-  defmacro __using__(_) do
+  defmacro __using__(opts) do
+    inspect? = Keyword.get(opts, :inspect, false)
+
     quote do
       def run() do
-        run_part1() |> IO.inspect(label: "Part 1")
-        run_part2() |> IO.inspect(label: "Part 2")
+        part1 = run_part1()
+        part2 = run_part2()
+
+        if unquote(inspect?) do
+          part1 |> IO.inspect(label: "Part 1")
+          part2 |> IO.inspect(label: "Part 2")
+        end
+
         :ok
       end
 
