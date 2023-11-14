@@ -1,7 +1,7 @@
 defmodule AocTest.Y2020.D1 do
   use ExUnit.Case, async: true
 
-  alias Aoc.Y2020.D1
+  alias Aoc.Y2020.D1, as: Solver
 
   @example """
     1721
@@ -14,11 +14,11 @@ defmodule AocTest.Y2020.D1 do
 
   describe "Example case" do
     test "part 1" do
-      assert D1.part1(@example) == 514_579
+      assert Solver.part1(@example) == 514_579
     end
 
     test "part 2" do
-      assert D1.part2(@example) == 241_861_950
+      assert Solver.part2(@example) == 241_861_950
     end
   end
 end
