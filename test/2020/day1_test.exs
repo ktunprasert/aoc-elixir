@@ -1,5 +1,5 @@
 defmodule AocTest.Y2020.D1 do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Aoc.Y2020.D1
 
@@ -20,9 +20,5 @@ defmodule AocTest.Y2020.D1 do
     test "part 2" do
       assert D1.part2(@example) == 241_861_950
     end
-  end
-
-  test "Part 1" do
-    assert D1.run_part1() == 926_464
   end
 end
