@@ -23,7 +23,7 @@ defmodule AocTest.Y2020.D3 do
     end
 
     test "part 2" do
-      # assert Solver.part2(@example) == 1
+      assert Solver.part2(@example) == 336
     end
   end
 end
