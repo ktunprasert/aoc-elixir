@@ -19,17 +19,17 @@ defmodule Aoc.Runner do
       def run(2), do: run_part2()
 
       def run_part1() do
-        part1(get_input(1))
+        part1(get_input())
       end
 
       def run_part2() do
-        part2(get_input(2))
+        part2(get_input())
       end
 
-      defp get_input(part) do
+      defp get_input() do
         module_name = to_string(__MODULE__)
         [year, day] = parse_module_name(module_name)
-        input_path = "/priv/inputs/#{year}/day#{day}-#{part}.txt"
+        input_path = "/priv/inputs/#{year}/day#{day}.txt"
 
         if !File.exists?(File.cwd!() <> input_path) do
           nil
