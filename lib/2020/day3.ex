@@ -9,7 +9,7 @@ defmodule Aoc.Y2020.D3 do
     col_count = grid |> Enum.at(0) |> Enum.count()
 
     Enum.zip(
-      Stream.iterate(start, &move_gen(col_count).(&1)),
+      Stream.iterate(start, &move_gen(col_count, 3, 1).(&1)),
       grid
     )
     |> Enum.reduce(0, fn {{x, _y}, row}, acc ->
@@ -25,7 +25,7 @@ defmodule Aoc.Y2020.D3 do
     :ok
   end
 
-  defp move_gen(n), do: fn {x, y} -> {(x + 3) |> rem(n), y + 1} end
+  defp move_gen(n, i, j), do: fn {x, y} -> {(x + i) |> rem(n), y + j} end
 
   def helper(input) do
     input |> parse_lines() |> Enum.map(&String.graphemes/1)
