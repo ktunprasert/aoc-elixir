@@ -24,7 +24,8 @@ defmodule Aoc.Y2020.D3 do
   def part2(input) do
     start = {0, 0}
     grid = input |> helper()
-    col_count = grid |> Enum.at(0) |> Enum.count()
+    col_count = grid |> Enum.at(0) |> length
+    row_count = grid |> length
 
     [
       move_gen(col_count, 1, 1),
@@ -34,7 +35,7 @@ defmodule Aoc.Y2020.D3 do
       move_gen(col_count, 1, 2)
     ]
     |> Enum.map(fn move ->
-      coords = Stream.iterate(start, &move.(&1)) |> Enum.take_while(fn {_, y} -> y <= 10 end)
+      coords = Stream.iterate(start, &move.(&1)) |> Enum.take_while(fn {_, y} -> y <= row_count - 1 end)
 
       coords
       |> Enum.map(fn {x, y} -> grid |> Enum.at(y) |> Enum.at(x) end)
