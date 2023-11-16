@@ -2,6 +2,24 @@
 
 ## Getting started
 
+### Setting ENV (Optional)
+
+```bash
+cp .env.example .env
+```
+
+Copy and insert your cookie (required only to download new inputs or running live submission)
+
+### Downloading your inputs
+
+```bash
+mix download 2020 1
+```
+
+This will download and place your inputs inside the folder required for the computation to run
+
+### Runnning computations
+
 ```elixir
 iex(1)> Aoc.Y2020.D1.run
 Part 1: 926464
