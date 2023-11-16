@@ -5,14 +5,7 @@ defmodule Aoc.Y2020.D4 do
 
   @required ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
   def part1(input) do
-    passports =
-      helper(input)
-      |> Enum.map(fn passport ->
-        passport
-        |> String.split(" ")
-        |> Enum.map(&(&1 |> String.split(":") |> List.to_tuple()))
-        |> Enum.into(%{})
-      end)
+    passports = helper(input)
 
     passports
     |> Enum.count(fn passport ->
@@ -25,6 +18,14 @@ defmodule Aoc.Y2020.D4 do
   end
 
   def helper(input) do
-    input |> parse_lines("\n\n") |> Enum.map(&String.replace(&1, ~r/[\s]/, " "))
+    input
+    |> parse_lines("\n\n")
+    |> Enum.map(&String.replace(&1, ~r/[\s]/, " "))
+    |> Enum.map(fn passport ->
+      passport
+      |> String.split(" ")
+      |> Enum.map(&(&1 |> String.split(":") |> List.to_tuple()))
+      |> Enum.into(%{})
+    end)
   end
 end
