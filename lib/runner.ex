@@ -1,4 +1,14 @@
 defmodule Aoc.Runner do
+  def run(year, day, part \\ nil) do
+    module = "Elixir.Aoc.Y#{year}.D#{day}" |> String.to_existing_atom()
+
+    if part do
+      apply(module, :run, [part])
+    else
+      apply(module, :run, [])
+    end
+  end
+
   defmacro __using__(opts) do
     inspect? = Keyword.get(opts, :inspect, false)
 
