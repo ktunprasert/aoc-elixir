@@ -21,9 +21,9 @@ defmodule Aoc.Y2020.D5 do
       |> Enum.map(&decode/1)
       |> Enum.into(MapSet.new())
 
-    ceil = Enum.max(set)
+    {floor, ceil} = {Enum.min(set), Enum.max(set)}
 
-    [diff] = MapSet.difference(Enum.into(48..(ceil - 48), MapSet.new()), set) |> Enum.to_list()
+    [diff] = MapSet.difference(floor..ceil |> Enum.into(MapSet.new()), set) |> Enum.to_list()
     diff
   end
 
