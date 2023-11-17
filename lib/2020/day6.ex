@@ -18,7 +18,16 @@ defmodule Aoc.Y2020.D6 do
   end
 
   def part2(input) do
-    :ok
+    helper(input)
+    |> Enum.reduce(0, fn group, acc ->
+      count = group
+      |> String.split("\n")
+      |> Enum.map(& &1 |> String.graphemes() |> MapSet.new())
+      |> Enum.reduce(&MapSet.intersection/2)
+      |> Enum.count()
+
+      acc + count
+    end)
   end
 
   def helper(input) do
