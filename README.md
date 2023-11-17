@@ -18,6 +18,14 @@ mix download 2020 1
 
 This will download and place your inputs inside the folder required for the computation to run
 
+### Generating the day module and related tests
+
+```bash
+mix gen.aoc 2020 5
+```
+
+This will set up your day, day test and download your input all in one go
+
 ### Runnning computations
 
 ```elixir
