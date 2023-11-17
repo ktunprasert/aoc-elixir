@@ -19,11 +19,11 @@ defmodule Aoc.Y2020.D5 do
     set =
       codes
       |> Enum.map(&decode/1)
-      |> Enum.into(MapSet.new())
+      |> MapSet.new()
 
     {floor, ceil} = {Enum.min(set), Enum.max(set)}
 
-    [diff] = MapSet.difference(floor..ceil |> Enum.into(MapSet.new()), set) |> Enum.to_list()
+    [diff] = MapSet.difference(floor..ceil |> MapSet.new(), set) |> Enum.to_list()
     diff
   end
 
