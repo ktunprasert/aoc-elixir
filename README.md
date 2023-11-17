@@ -48,6 +48,20 @@ iex(2)> Aoc.Runner.run 2020,1,2
 65656536
 ```
 
+If you're too lazy to type I've added `.iex.exs` script to import `Aoc.Runner` which
+means you can access `Aoc.Runner.run` without namespacing it
+
+```elixir
+iex(1)> run 2020,1,1
+926464
+iex(2)> run 2020,1,2
+65656536
+iex(3)> run 2020,1
+Part 1: 926464
+Part 2: 65656536
+:ok
+```
+
 The repo contains year and day separated modules that has macros to run the solution
 dates in `Aoc.Runner`. The parts can be executed directly with `Aoc.Y2020.D1.part1`
 or `Aoc.Y2020.D1.part2` though the macros provide an easy way to quickly run given there's
