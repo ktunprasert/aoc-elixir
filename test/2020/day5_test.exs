@@ -16,10 +16,6 @@ defmodule AocTest.Y2020.D5 do
     test "part 1" do
       assert Solver.part1(@example) == 820
     end
-
-    test "part 2" do
-      assert Solver.part2(@example) == :ok
-    end
   end
 
   describe "Example helpers" do

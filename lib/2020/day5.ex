@@ -14,7 +14,17 @@ defmodule Aoc.Y2020.D5 do
   end
 
   def part2(input) do
-    :ok
+    codes = input |> helper
+
+    set =
+      codes
+      |> Enum.map(&decode/1)
+      |> Enum.into(MapSet.new())
+
+    ceil = Enum.max(set)
+
+    [diff] = MapSet.difference(Enum.into(48..(ceil - 48), MapSet.new()), set) |> Enum.to_list()
+    diff
   end
 
   def decode(code_str) do
