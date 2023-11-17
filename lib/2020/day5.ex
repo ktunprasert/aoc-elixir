@@ -6,7 +6,11 @@ defmodule Aoc.Y2020.D5 do
   @fb_pair {0, 127}
   @lr_pair {0, 7}
   def part1(input) do
-    :ok
+    codes = input |> helper
+
+    codes
+    |> Enum.map(&decode/1)
+    |> Enum.max()
   end
 
   def part2(input) do

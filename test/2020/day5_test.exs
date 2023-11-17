@@ -3,13 +3,18 @@ defmodule AocTest.Y2020.D5 do
 
   alias Aoc.Y2020.D5, as: Solver
 
-  @example ""
+  @example """
+  BFFFBBFRRR
+  FFFBBBFRRR
+  BBFFBBFRLL
+  """
+
   @fb_pair {0, 127}
   @lr_pair {0, 7}
 
   describe "Example case" do
     test "part 1" do
-      assert Solver.part1(@example) == :ok
+      assert Solver.part1(@example) == 820
     end
 
     test "part 2" do
