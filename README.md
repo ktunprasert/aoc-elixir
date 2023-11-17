@@ -39,6 +39,15 @@ iex(3)> Aoc.Y2020.D1.run 2
 65656536
 ```
 
+Equivalent would be
+
+```elixir
+iex(1)> Aoc.Runner.run 2020,1,1
+926464
+iex(2)> Aoc.Runner.run 2020,1,2
+65656536
+```
+
 The repo contains year and day separated modules that has macros to run the solution
 dates in `Aoc.Runner`. The parts can be executed directly with `Aoc.Y2020.D1.part1`
 or `Aoc.Y2020.D1.part2` though the macros provide an easy way to quickly run given there's
