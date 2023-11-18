@@ -6,19 +6,7 @@ defmodule Aoc.Y2020.D7 do
   @cursor "shiny gold"
 
   def part1(input) do
-    bags = helper(input)
-
-    map =
-      for [name | mappings] <- bags, into: %{} do
-        case mappings do
-          [] ->
-            {name, nil}
-
-          mappings ->
-            val = mappings |> Enum.map(fn [n, name] -> {name, n} end) |> Enum.into(%{})
-            {name, val}
-        end
-      end
+    map = helper(input)
 
     map
     |> Enum.map(fn {_, small_map} ->
@@ -49,7 +37,7 @@ defmodule Aoc.Y2020.D7 do
   end
 
   def helper(input) do
-    lines =
+    bags =
       input
       |> String.replace(~r/(bags|bag|contain|,|\.|no other)/, "")
       |> parse_lines()
@@ -64,6 +52,15 @@ defmodule Aoc.Y2020.D7 do
         end
       end)
 
-    lines
+    for [name | mappings] <- bags, into: %{} do
+      case mappings do
+        [] ->
+          {name, nil}
+
+        mappings ->
+          val = mappings |> Enum.map(fn [n, name] -> {name, n} end) |> Enum.into(%{})
+          {name, val}
+      end
+    end
   end
 end
