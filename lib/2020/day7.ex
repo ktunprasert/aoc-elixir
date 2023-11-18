@@ -16,7 +16,22 @@ defmodule Aoc.Y2020.D7 do
   end
 
   def part2(input) do
-    :ok
+    map = helper(input)
+
+    deep_sum_map(map, @cursor)
+  end
+
+  def deep_sum_map(map, key) do
+    case Map.get(map, key) do
+      nil ->
+        0
+
+      %{} = small_map ->
+        small_map
+        |> Enum.reduce(0, fn {k, v}, acc ->
+          acc + v + v * deep_sum_map(map, k)
+        end)
+    end
   end
 
   def deep_check_map(nil, _), do: false
@@ -58,7 +73,11 @@ defmodule Aoc.Y2020.D7 do
           {name, nil}
 
         mappings ->
-          val = mappings |> Enum.map(fn [n, name] -> {name, n} end) |> Enum.into(%{})
+          val =
+            mappings
+            |> Enum.map(fn [n, name] -> {name, n |> String.to_integer()} end)
+            |> Enum.into(%{})
+
           {name, val}
       end
     end

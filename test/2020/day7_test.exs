@@ -15,13 +15,24 @@ defmodule AocTest.Y2020.D7 do
   dotted black bags contain no other bags.
   """
 
+  @example2 """
+  shiny gold bags contain 2 dark red bags.
+  dark red bags contain 2 dark orange bags.
+  dark orange bags contain 2 dark yellow bags.
+  dark yellow bags contain 2 dark green bags.
+  dark green bags contain 2 dark blue bags.
+  dark blue bags contain 2 dark violet bags.
+  dark violet bags contain no other bags.
+  """
+
   describe "Example case" do
     test "part 1" do
       assert Solver.part1(@example) == 4
     end
 
     test "part 2" do
-      assert Solver.part2(@example) == :ok
+      assert Solver.part2(@example) == 32
+      assert Solver.part2(@example2) == 126
     end
   end
 end
