@@ -23,7 +23,7 @@ defmodule Aoc.Y2020.D7 do
 
   def deep_sum_map(map, key) do
     case Map.get(map, key) do
-      nil ->
+      :self ->
         0
 
       %{} = small_map ->
@@ -34,8 +34,7 @@ defmodule Aoc.Y2020.D7 do
     end
   end
 
-  def deep_check_map(nil, _), do: false
-  def deep_check_map(_, nil), do: false
+  def deep_check_map(_, :self), do: false
 
   def deep_check_map(map, small_map) do
     case Map.get(small_map, @cursor) do
@@ -70,7 +69,7 @@ defmodule Aoc.Y2020.D7 do
     for [name | mappings] <- bags, into: %{} do
       case mappings do
         [] ->
-          {name, nil}
+          {name, :self}
 
         mappings ->
           val =
