@@ -10,7 +10,7 @@ defmodule Aoc.Y2020.D7 do
 
     map
     |> Enum.map(fn {_, small_map} ->
-      deep_check_map(map, small_map)
+      deep_check(map, small_map)
     end)
     |> Enum.count(& &1)
   end
@@ -18,10 +18,10 @@ defmodule Aoc.Y2020.D7 do
   def part2(input) do
     map = helper(input)
 
-    deep_sum_map(map, @cursor)
+    deep_sum(map, @cursor)
   end
 
-  def deep_sum_map(map, key) do
+  def deep_sum(map, key) do
     case Map.get(map, key) do
       :self ->
         0
@@ -29,20 +29,20 @@ defmodule Aoc.Y2020.D7 do
       %{} = small_map ->
         small_map
         |> Enum.reduce(0, fn {k, v}, acc ->
-          acc + v + v * deep_sum_map(map, k)
+          acc + v + v * deep_sum(map, k)
         end)
     end
   end
 
-  def deep_check_map(_, :self), do: false
+  def deep_check(_, :self), do: false
 
-  def deep_check_map(map, small_map) do
+  def deep_check(map, small_map) do
     case Map.get(small_map, @cursor) do
       nil ->
         keys = Map.keys(small_map)
 
         Enum.any?(keys, fn k ->
-          deep_check_map(map, Map.get(map, k))
+          deep_check(map, Map.get(map, k))
         end)
 
       _ ->
