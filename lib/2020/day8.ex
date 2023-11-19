@@ -17,10 +17,16 @@ defmodule Aoc.Y2020.D8 do
 
     0..length(lines)
     |> Stream.map(&replace_instructions(lines, &1))
-    |> Enum.reduce_while(nil, fn lines, acc ->
-      case execute(MapSet.new(), lines, 0) do
-        {:ok, acc} -> {:halt, acc}
-        {:oops, _} -> {:cont, acc}
+    |> Enum.reduce_while({nil, MapSet.new()}, fn lines, {acc, executed} ->
+      if lines in executed do
+        {:cont, {acc, executed}}
+      else
+        executed = MapSet.put(executed, lines)
+
+        case execute(MapSet.new(), lines, 0) do
+          {:ok, acc} -> {:halt, acc}
+          {:oops, _} -> {:cont, {acc, executed}}
+        end
       end
     end)
   end
