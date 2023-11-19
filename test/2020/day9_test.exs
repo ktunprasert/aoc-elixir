@@ -32,7 +32,7 @@ defmodule AocTest.Y2020.D9 do
     end
 
     test "part 2" do
-      assert Solver.part2(@example) == :ok
+      assert Solver.part2(@example, 5) == 62
     end
   end
 end

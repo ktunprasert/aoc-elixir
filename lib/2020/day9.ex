@@ -9,11 +9,34 @@ defmodule Aoc.Y2020.D9 do
     preamble(nums, range)
   end
 
-  def part2(input) do
-    :ok
+  def part2(input, range \\ 25) do
+    nums = helper(input)
+
+    target = preamble(nums, range)
+
+    slice = find_contiguous(nums, target, 0, 1)
+
+    Enum.min(slice) + Enum.max(slice)
   end
 
-  def preamble(nums, range) do
+  def find_contiguous(nums, _, i, j) when i > length(nums) or j > length(nums), do: :not_found
+
+  def find_contiguous(nums, target, i, j) do
+    slice = Enum.slice(nums, i..j)
+
+    case slice |> Enum.sum() do
+      ^target ->
+        slice
+
+      sum when sum > target ->
+        find_contiguous(nums, target, i + 1, i + 2)
+
+      sum when sum < target ->
+        find_contiguous(nums, target, i, j + 1)
+    end
+  end
+
+  def preamble(nums, range \\ 25) do
     0..(length(nums) - range - 1)
     |> Stream.map(fn idx ->
       [target | nums] = Enum.slice(nums, idx, range + 1) |> Enum.reverse()
