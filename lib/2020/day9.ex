@@ -25,14 +25,9 @@ defmodule Aoc.Y2020.D9 do
     slice = Enum.slice(nums, i..j)
 
     case slice |> Enum.sum() do
-      ^target ->
-        slice
-
-      sum when sum > target ->
-        find_contiguous(nums, target, i + 1, i + 2)
-
-      sum when sum < target ->
-        find_contiguous(nums, target, i, j + 1)
+      ^target -> slice
+      sum when sum > target -> find_contiguous(nums, target, i + 1, i + 2)
+      sum when sum < target -> find_contiguous(nums, target, i, j + 1)
     end
   end
 
