@@ -37,11 +37,11 @@ defmodule Aoc.Y2020.D9 do
       [target | nums] = Enum.slice(nums, idx, range + 1) |> Enum.reverse()
 
       # Creating a combination stream from two arrays
-      Stream.flat_map(nums, fn i -> Stream.map(nums, fn j -> {i, j} end) end)
+      Stream.flat_map(nums, fn i -> Stream.map(nums, fn j -> i+j end) end)
       |> Enum.reduce_while(
         :not_found,
         fn
-          {i, j}, _ when i + j == target ->
+          ^target, _ ->
             {:halt, :found}
 
           _, acc ->
