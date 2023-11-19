@@ -32,12 +32,16 @@ defmodule Aoc.Y2020.D8 do
   end
 
   def replace_instructions(lines, index) do
-    Enum.with_index(lines)
-    |> Enum.map(fn
-      {"nop " <> n, ^index} -> "jmp #{n}"
-      {"jmp " <> n, ^index} -> "nop #{n}"
-      {line, _} -> line
-    end)
+    lines
+    |> List.replace_at(
+      index,
+      Enum.at(lines, index)
+      |> then(fn
+        "nop " <> n -> "jmp #{n}"
+        "jmp " <> n -> "nop #{n}"
+        line -> line
+      end)
+    )
   end
 
   def execute(set, lines, n, acc \\ 0) do
