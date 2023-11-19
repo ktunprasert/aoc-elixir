@@ -42,7 +42,7 @@ defmodule Aoc.Y2020.D9 do
         :not_found,
         fn
           {i, j}, _ when i + j == target ->
-            {:halt, :ok}
+            {:halt, :found}
 
           _, acc ->
             {:cont, acc}
