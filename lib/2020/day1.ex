@@ -7,9 +7,7 @@ defmodule Aoc.Y2020.D1 do
     numbers = helper(input)
 
     Enum.reduce_while(
-      for i <- numbers, j <- numbers do
-        [i, j]
-      end,
+      Stream.flat_map(numbers, fn i -> Stream.map(numbers, fn j -> [i, j] end) end),
       0,
       fn
         [i, j], _acc when i + j == 2020 ->
@@ -25,9 +23,11 @@ defmodule Aoc.Y2020.D1 do
     numbers = helper(input)
 
     Enum.reduce_while(
-      for i <- numbers, j <- numbers, k <- numbers do
-        [i, j, k]
-      end,
+      Stream.flat_map(numbers, fn i ->
+        Stream.flat_map(numbers, fn j ->
+          Stream.map(numbers, fn k -> [i, j, k] end)
+        end)
+      end),
       0,
       fn
         [i, j, k], _acc when i + j + k == 2020 ->
