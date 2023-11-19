@@ -20,13 +20,13 @@ defmodule Aoc.Y2020.D6 do
   def part2(input) do
     helper(input)
     |> Enum.reduce(0, fn group, acc ->
-      count = group
+      unions = group
       |> String.split("\n")
       |> Enum.map(& &1 |> String.graphemes() |> MapSet.new())
       |> Enum.reduce(&MapSet.intersection/2)
       |> Enum.count()
 
-      acc + count
+      acc + unions
     end)
   end
 
