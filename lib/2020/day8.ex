@@ -15,7 +15,7 @@ defmodule Aoc.Y2020.D8 do
   def part2(input) do
     lines = helper(input)
 
-    Stream.iterate(0, &(&1 + 1))
+    0..length(lines)
     |> Stream.map(&replace_instructions(lines, &1))
     |> Enum.reduce_while(nil, fn lines, acc ->
       case execute(MapSet.new(), lines, 0) do
