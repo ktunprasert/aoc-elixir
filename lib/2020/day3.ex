@@ -34,14 +34,17 @@ defmodule Aoc.Y2020.D3 do
       move_gen(col_count, 7, 1),
       move_gen(col_count, 1, 2)
     ]
-    |> Enum.map(fn move ->
-      coords = Stream.iterate(start, &move.(&1)) |> Enum.take_while(fn {_, y} -> y <= row_count - 1 end)
+    |> Enum.reduce(1, fn move, acc ->
+      coords =
+        Stream.iterate(start, &move.(&1)) |> Enum.take_while(fn {_, y} -> y <= row_count - 1 end)
 
-      coords
-      |> Enum.map(fn {x, y} -> grid |> Enum.at(y) |> Enum.at(x) end)
-      |> Enum.count(fn x -> x == "#" end)
+      trees =
+        coords
+        |> Enum.map(fn {x, y} -> grid |> Enum.at(y) |> Enum.at(x) end)
+        |> Enum.count(fn x -> x == "#" end)
+
+      acc * trees
     end)
-    |> Enum.reduce(&*/2)
   end
 
   defp move_gen(n, i, j), do: fn {x, y} -> {(x + i) |> rem(n), y + j} end
