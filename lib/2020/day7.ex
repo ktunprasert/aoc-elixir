@@ -9,10 +9,7 @@ defmodule Aoc.Y2020.D7 do
     map = helper(input)
 
     map
-    |> Enum.map(fn {_, small_map} ->
-      deep_check(map, small_map)
-    end)
-    |> Enum.count(& &1)
+    |> Enum.count(fn {_, small_map} -> deep_check(map, small_map) end)
   end
 
   def part2(input) do
