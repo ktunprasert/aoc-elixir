@@ -12,13 +12,7 @@ defmodule Aoc.Y2020.D3 do
       Stream.iterate(start, &move_gen(col_count, 3, 1).(&1)),
       grid
     )
-    |> Enum.reduce(0, fn {{x, _y}, row}, acc ->
-      if row |> Enum.at(x) == "#" do
-        acc + 1
-      else
-        acc
-      end
-    end)
+    |> Enum.count(fn {{x, _}, row} -> row |> Enum.at(x) == "#" end)
   end
 
   def part2(input) do
@@ -35,13 +29,10 @@ defmodule Aoc.Y2020.D3 do
       move_gen(col_count, 1, 2)
     ]
     |> Enum.reduce(1, fn move, acc ->
-      coords =
-        Stream.iterate(start, &move.(&1)) |> Enum.take_while(fn {_, y} -> y <= row_count - 1 end)
-
       trees =
-        coords
-        |> Enum.map(fn {x, y} -> grid |> Enum.at(y) |> Enum.at(x) end)
-        |> Enum.count(fn x -> x == "#" end)
+        Stream.iterate(start, &move.(&1))
+        |> Enum.take_while(fn {_, y} -> y < row_count end)
+        |> Enum.count(fn {x, y} -> grid |> Enum.at(y) |> Enum.at(x) == "#" end)
 
       acc * trees
     end)
