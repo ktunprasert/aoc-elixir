@@ -21,30 +21,32 @@ defmodule Aoc.Y2020.D10 do
   def part2(input) do
     jolts = helper(input)
 
-    device_jolt = Enum.max(jolts) + 3
-    jolts = [0 | jolts] ++ [device_jolt]
+    last = List.last(jolts)
 
-    {_, {_, jolt_dist_chunks}} =
-      jolts
-      |> Enum.map_reduce(
-        {0, [[]]},
-        fn x, {acc, [lst | rest]} ->
-          case x - acc do
-            1 -> {x - acc, {x, [[x - acc | lst] | rest]}}
-            _ -> {x - acc, {x, [[], lst | rest]}}
-          end
-        end
-      )
-
-    jolt_dist_chunks
-    |> Enum.filter(&length(&1) >= 2)
+    jolts
+    |> Enum.reduce_while({0, []}, fn jolt, {prev, acc} ->
+      if jolt == last do
+        {:halt, [jolt - prev | acc]}
+      else
+        {:cont, {jolt, [jolt - prev | acc]}}
+      end
+    end)
+    |> Enum.chunk_by(&(&1 == 1))
+    |> Enum.filter(fn
+      [1 | _] = lst -> length(lst) >= 2
+      _ -> false
+    end)
     |> Enum.reduce(1, fn arr, acc ->
-      tribonacci(length(arr)) * acc
+      tribonacci(length(arr) + 1) * acc
     end)
   end
 
+  def tribonacci(n) when n <= 0, do: 0
+  def tribonacci(1), do: 1
+  def tribonacci(2), do: 1
+
   def tribonacci(n) do
-    [1, 2, 4, 7, 13] |> Enum.at(n - 1)
+    tribonacci(n - 1) + tribonacci(n - 2) + tribonacci(n - 3)
   end
 
   def helper(input) do
