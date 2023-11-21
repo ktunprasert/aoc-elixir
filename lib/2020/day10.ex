@@ -19,7 +19,32 @@ defmodule Aoc.Y2020.D10 do
   end
 
   def part2(input) do
-    :ok
+    jolts = helper(input)
+
+    device_jolt = Enum.max(jolts) + 3
+    jolts = [0 | jolts] ++ [device_jolt]
+
+    {_, {_, jolt_dist_chunks}} =
+      jolts
+      |> Enum.map_reduce(
+        {0, [[]]},
+        fn x, {acc, [lst | rest]} ->
+          case x - acc do
+            1 -> {x - acc, {x, [[x - acc | lst] | rest]}}
+            _ -> {x - acc, {x, [[], lst | rest]}}
+          end
+        end
+      )
+
+    jolt_dist_chunks
+    |> Enum.filter(&length(&1) >= 2)
+    |> Enum.reduce(1, fn arr, acc ->
+      tribonacci(length(arr)) * acc
+    end)
+  end
+
+  def tribonacci(n) do
+    [1, 2, 4, 7, 13] |> Enum.at(n - 1)
   end
 
   def helper(input) do

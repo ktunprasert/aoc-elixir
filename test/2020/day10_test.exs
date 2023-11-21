@@ -58,7 +58,8 @@ defmodule AocTest.Y2020.D10 do
     end
 
     test "part 2" do
-      assert Solver.part2(@example) == :ok
+      assert Solver.part2(@short_example) == 8
+      assert Solver.part2(@long_example) == 19208
     end
   end
 end
