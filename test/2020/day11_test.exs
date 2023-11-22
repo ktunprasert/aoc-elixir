@@ -59,9 +59,10 @@ defmodule AocTest.Y2020.D11 do
 
     test "apply_rule/3" do
       grid = Solver.helper(@example)
+      adjacent = Solver.precompute_adjacent(grid)
 
-      assert(Solver.apply_rule(grid, {0, 0}) == "#")
-      assert(Solver.apply_rule(grid, {0, 1}) == ".")
+      assert(Solver.apply_rule(grid, adjacent, {0, 0}, "L") == "#")
+      assert(Solver.apply_rule(grid, adjacent, {0, 1}, ".") == ".")
     end
 
     test "play/1" do
