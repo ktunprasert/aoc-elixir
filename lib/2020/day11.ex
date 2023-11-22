@@ -22,7 +22,7 @@ defmodule Aoc.Y2020.D11 do
     |> Enum.filter(fn {i, j} -> i >= 0 and j >= 0 end)
   end
 
-  def at(grid, {row, col}), do: grid |> Enum.at(row) |> Enum.at(col)
+  def at(grid, {row, col}), do: grid |> Enum.at(row, []) |> Enum.at(col)
 
   def helper(input) do
     input |> parse_lines() |> Enum.map(&String.graphemes/1)

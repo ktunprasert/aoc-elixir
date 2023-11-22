@@ -46,6 +46,9 @@ defmodule AocTest.Y2020.D11 do
       assert Solver.at(grid, {0, 1}) == "."
       assert Solver.at(grid, {1, 0}) == "L"
       assert Solver.at(grid, {1, 1}) == "L"
+
+      assert Solver.at(grid, {69, 420}) == nil
+    end
     end
   end
 end
