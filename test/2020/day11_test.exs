@@ -33,6 +33,10 @@ defmodule AocTest.Y2020.D11 do
         {1, 0},         {1, 2},
         {2, 0}, {2, 1}, {2, 2}
       ]
+
+      assert Solver.get_adjacent({0,0}) == [
+        {0, 1}, {1, 0}, {1, 1}
+      ]
     end
 
     test "at/2" do
