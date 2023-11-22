@@ -18,7 +18,7 @@ defmodule AocTest.Y2020.D11 do
 
   describe "Example case" do
     test "part 1" do
-      assert Solver.part1(@example) == :ok
+      assert Solver.part1(@example) == 37
     end
 
     test "part 2" do

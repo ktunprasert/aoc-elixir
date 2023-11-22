@@ -10,8 +10,14 @@ defmodule Aoc.Y2020.D11 do
   def part1(input) do
     grid = helper(input)
 
-    play(grid) |> dbg
-    :ok
+    Stream.iterate(grid, &play/1)
+    |> Enum.reduce_while(nil, fn grid, prev ->
+      case grid do
+        ^prev -> {:halt, prev |> List.flatten()}
+        _ -> {:cont, grid}
+      end
+    end)
+    |> Enum.count(&(&1 == @occupied))
   end
 
   def part2(input) do
