@@ -28,15 +28,22 @@ defmodule AocTest.Y2020.D11 do
 
   describe "Helper" do
     test "get_adjacent/1" do
-      assert Solver.get_adjacent({1,1}) == [
-        {0, 0}, {0, 1}, {0, 2},
-        {1, 0},         {1, 2},
-        {2, 0}, {2, 1}, {2, 2}
-      ]
+      assert Solver.get_adjacent({1, 1}) == [
+               {0, 0},
+               {0, 1},
+               {0, 2},
+               {1, 0},
+               {1, 2},
+               {2, 0},
+               {2, 1},
+               {2, 2}
+             ]
 
-      assert Solver.get_adjacent({0,0}) == [
-        {0, 1}, {1, 0}, {1, 1}
-      ]
+      assert Solver.get_adjacent({0, 0}) == [
+               {0, 1},
+               {1, 0},
+               {1, 1}
+             ]
     end
 
     test "at/2" do
@@ -49,6 +56,32 @@ defmodule AocTest.Y2020.D11 do
 
       assert Solver.at(grid, {69, 420}) == nil
     end
+
+    test "apply_rule/3" do
+      grid = Solver.helper(@example)
+
+      assert(Solver.apply_rule(grid, {0, 0}, "L") == "#")
+      assert(Solver.apply_rule(grid, {0, 0}, "#") == "#")
+      assert(Solver.apply_rule(grid, {0, 1}, ".") == ".")
+    end
+
+    test "play/1" do
+      grid = Solver.helper(@example)
+
+      assert Solver.play(grid) ==
+               """
+               #.##.##.##
+               #######.##
+               #.#.#..#..
+               ####.##.##
+               #.##.##.##
+               #.#####.##
+               ..#.#.....
+               ##########
+               #.######.#
+               #.#####.##
+               """
+               |> Solver.helper()
     end
   end
 end
