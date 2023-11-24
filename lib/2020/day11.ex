@@ -7,6 +7,17 @@ defmodule Aoc.Y2020.D11 do
   @occupied "#"
   @floor "."
 
+  @vectors [
+    {0, 1},
+    {0, -1},
+    {1, 0},
+    {-1, 0},
+    {1, 1},
+    {1, -1},
+    {-1, 1},
+    {-1, -1}
+  ]
+
   def part1(input) do
     grid = helper(input)
 
@@ -23,7 +34,53 @@ defmodule Aoc.Y2020.D11 do
   end
 
   def part2(input) do
-    :ok
+    grid = helper(input)
+
+    bound = grid |> Map.keys() |> Enum.max()
+
+    Stream.iterate(grid, &play2(&1, bound))
+    |> Enum.reduce_while(nil, fn grid, prev ->
+      case grid do
+        ^prev -> {:halt, prev}
+        _ -> {:cont, grid}
+      end
+    end)
+    |> Enum.count(fn {_, v} -> v == @occupied end)
+  end
+
+  def play2(grid, {rows, columns}) do
+    Enum.reduce(grid, %{}, fn {{x, y}, seat}, acc ->
+      count =
+        @vectors
+        |> Enum.map(fn {i, j} ->
+          Stream.unfold({x, y}, fn
+            {x, y} when x < 0 or y < 0 or x > rows or y > columns -> nil
+            {x, y} -> {{x, y}, {x + i, y + j}}
+          end)
+        end)
+        |> Enum.map(fn strm ->
+          strm
+          |> Stream.drop(1)
+          |> Stream.map(&at(grid, &1))
+          |> Enum.reduce_while(0, fn seat, acc ->
+            case seat do
+              @occupied -> {:halt, 1}
+              @empty -> {:halt, 0}
+              @floor -> {:cont, acc}
+            end
+          end)
+        end)
+        |> Enum.sum()
+
+      new_seat =
+        case {seat, count} do
+          {@occupied, n} when n >= 5 -> @empty
+          {@empty, 0} -> @occupied
+          _ -> seat
+        end
+
+      Map.put(acc, {x, y}, new_seat)
+    end)
   end
 
   def play(grid, adjacent) do
@@ -55,19 +112,12 @@ defmodule Aoc.Y2020.D11 do
     grid
     |> Enum.reduce(%{}, fn {{x, y}, _}, acc ->
       adj =
-        get_adjacent({x, y})
+        @vectors
+        |> Enum.map(fn {i, j} -> {x + i, y + j} end)
         |> Enum.filter(fn {i, j} -> i >= 0 && j >= 0 && i <= rows && j <= columns end)
 
       Map.put(acc, {x, y}, adj)
     end)
-  end
-
-  def get_adjacent({x, y}) do
-    vector = [-1, 0, 1]
-
-    for i <- vector, j <- vector, {i, j} != {0, 0} do
-      {x + i, y + j}
-    end
   end
 
   def at(grid, pos), do: Map.get(grid, pos)
