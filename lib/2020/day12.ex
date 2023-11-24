@@ -35,13 +35,13 @@ defmodule Aoc.Y2020.D12 do
     abs(n - s) + abs(e - w)
   end
 
-  def move_with_waypoint({code, unit}, pos, {wn, we, ws, ww} = waypoint) do
+  def move_with_waypoint({code, unit}, pos, waypoint) do
     case code do
       "F" -> {traverse(pos, unit, waypoint), waypoint}
-      "N" -> {pos, {wn + unit, we, ws, ww}}
-      "E" -> {pos, {wn, we + unit, ws, ww}}
-      "S" -> {pos, {wn, we, ws + unit, ww}}
-      "W" -> {pos, {wn, we, ws, ww + unit}}
+      "N" -> {pos, pos_move(waypoint, unit, :north)}
+      "E" -> {pos, pos_move(waypoint, unit, :east)}
+      "S" -> {pos, pos_move(waypoint, unit, :south)}
+      "W" -> {pos, pos_move(waypoint, unit, :west)}
       "R" -> {pos, rotate(waypoint, unit, true)}
       "L" -> {pos, rotate(waypoint, unit, false)}
     end
@@ -62,39 +62,34 @@ defmodule Aoc.Y2020.D12 do
     end
   end
 
-  def move({code, unit}, {n, e, s, w}, facing) do
+  def move({code, unit}, {n, e, s, w} = pos, facing) do
+    direction =
+      case facing do
+        0 -> :north
+        90 -> :east
+        180 -> :south
+        270 -> :west
+      end
+
     case code do
-      "F" ->
-        case facing do
-          0 -> {{n + unit, e, s, w}, facing}
-          90 -> {{n, e + unit, s, w}, facing}
-          180 -> {{n, e, s + unit, w}, facing}
-          270 -> {{n, e, s, w + unit}, facing}
-        end
-
-      "N" ->
-        {{n + unit, e, s, w}, facing}
-
-      "E" ->
-        {{n, e + unit, s, w}, facing}
-
-      "S" ->
-        {{n, e, s + unit, w}, facing}
-
-      "W" ->
-        {{n, e, s, w + unit}, facing}
-
-      "R" ->
-        {{n, e, s, w}, rem(facing + unit, 360)}
-
-      "L" ->
-        {{n, e, s, w}, rem(facing - unit, 360)}
+      "F" -> {pos_move(pos, unit, direction), facing}
+      "N" -> {pos_move(pos, unit, :north), facing}
+      "E" -> {pos_move(pos, unit, :east), facing}
+      "S" -> {pos_move(pos, unit, :south), facing}
+      "W" -> {pos_move(pos, unit, :west), facing}
+      "R" -> {{n, e, s, w}, rem(facing + unit, 360)}
+      "L" -> {{n, e, s, w}, rem(facing - unit, 360)}
     end
     |> then(fn
       {pos, facing} when facing < 0 -> {pos, facing + 360}
       self -> self
     end)
   end
+
+  def pos_move({n, e, s, w}, unit, :north), do: {n + unit, e, s, w}
+  def pos_move({n, e, s, w}, unit, :east), do: {n, e + unit, s, w}
+  def pos_move({n, e, s, w}, unit, :south), do: {n, e, s + unit, w}
+  def pos_move({n, e, s, w}, unit, :west), do: {n, e, s, w + unit}
 
   def helper(input) do
     input
