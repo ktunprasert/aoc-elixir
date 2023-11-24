@@ -11,18 +11,55 @@ defmodule Aoc.Y2020.D12 do
     facing = 90
 
     instructions
-    |> Enum.reduce({start, facing}, fn {code, unit}, {prev, facing} ->
-      move({code, unit}, prev, facing)
+    |> Enum.reduce({start, facing}, fn instruction, {prev, facing} ->
+      move(instruction, prev, facing)
     end)
     |> manhattan()
   end
 
   def part2(input) do
-    :ok
+    instructions = helper(input)
+
+    # North, East, South, West
+    start = {0, 0, 0, 0}
+    waypoint = {1, 10, 0, 0}
+
+    instructions
+    |> Enum.reduce({start, waypoint}, fn instruction, {prev, waypoint} ->
+      move_with_waypoint(instruction, prev, waypoint)
+    end)
+    |> manhattan()
   end
 
   def manhattan({{n, e, s, w}, _}) do
     abs(n - s) + abs(e - w)
+  end
+
+  def move_with_waypoint({code, unit}, pos, {wn, we, ws, ww} = waypoint) do
+    case code do
+      "F" -> {traverse(pos, unit, waypoint), waypoint}
+      "N" -> {pos, {wn + unit, we, ws, ww}}
+      "E" -> {pos, {wn, we + unit, ws, ww}}
+      "S" -> {pos, {wn, we, ws + unit, ww}}
+      "W" -> {pos, {wn, we, ws, ww + unit}}
+      "R" -> {pos, rotate(waypoint, unit, true)}
+      "L" -> {pos, rotate(waypoint, unit, false)}
+    end
+  end
+
+  def traverse({n, e, s, w}, factor, {wn, we, ws, ww}) do
+    {n + wn * factor, e + we * factor, s + ws * factor, w + ww * factor}
+  end
+
+  def rotate({n, e, s, w} = pos, rotation, clockwise) do
+    rotation = if clockwise, do: rotation, else: 360 - rotation
+
+    case rotation do
+      90 -> {w, n, e, s}
+      180 -> {s, w, n, e}
+      270 -> {e, s, w, n}
+      _ -> pos
+    end
   end
 
   def move({code, unit}, {n, e, s, w}, facing) do
