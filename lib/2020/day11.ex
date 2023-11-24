@@ -28,37 +28,44 @@ defmodule Aoc.Y2020.D11 do
 
   def play(grid, adjacent) do
     Enum.reduce(grid, %{}, fn {{x, y}, seat}, acc ->
-      Map.put(acc, {x, y}, apply_rule(grid, adjacent, {x, y}, seat))
+      count =
+        Map.get(adjacent, {x, y})
+        |> Enum.reduce_while(0, fn {i, j}, acc ->
+          cond do
+            acc >= 4 -> {:halt, acc}
+            at(grid, {i, j}) == @occupied -> {:cont, acc + 1}
+            true -> {:cont, acc}
+          end
+        end)
+
+      new_seat =
+        case {seat, count} do
+          {@occupied, 4} -> @empty
+          {@empty, 0} -> @occupied
+          _ -> seat
+        end
+
+      Map.put(acc, {x, y}, new_seat)
     end)
   end
 
-  def apply_rule(grid, adjacent, pos, self = @empty) do
-    case Map.get(adjacent, pos) |> Enum.count(&(at(grid, &1) == @occupied)) do
-      0 -> @occupied
-      _ -> self
-    end
-  end
-
-  def apply_rule(grid, adjacent, pos, self = @occupied) do
-    case Map.get(adjacent, pos) |> Enum.count(&(at(grid, &1) == @occupied)) do
-      n when n >= 4 -> @empty
-      _ -> self
-    end
-  end
-
-  def apply_rule(_grid, _, _, self), do: self
-
   def precompute_adjacent(grid) do
+    {rows, columns} = grid |> Map.keys() |> Enum.max()
+
     grid
     |> Enum.reduce(%{}, fn {{x, y}, _}, acc ->
-      Map.put(acc, {x, y}, get_adjacent({x, y}))
+      adj =
+        get_adjacent({x, y})
+        |> Enum.filter(fn {i, j} -> i >= 0 && j >= 0 && i <= rows && j <= columns end)
+
+      Map.put(acc, {x, y}, adj)
     end)
   end
 
   def get_adjacent({x, y}) do
     vector = [-1, 0, 1]
 
-    for i <- vector, j <- vector, {i, j} != {0, 0} && x + i >= 0 && y + j >= 0 do
+    for i <- vector, j <- vector, {i, j} != {0, 0} do
       {x + i, y + j}
     end
   end
