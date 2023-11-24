@@ -13,7 +13,7 @@ defmodule Mix.Tasks.Gen.Aoc do
     Mix.Generator.create_directory("lib/#{year}")
     Mix.Generator.copy_template("priv/templates/aoc.ex.eex", "lib/#{year}/day#{day}.ex", day: day, year: year)
     Mix.Generator.copy_template("priv/templates/aoc_test.ex.eex", "test/#{year}/day#{day}_test.exs", day: day, year: year)
-    generate_input(year, day) |> write_file("priv/inputs/#{year}/day#{day}.txt")
+    Mix.Generator.create_file("priv/inputs/#{year}/day#{day}.txt", generate_input(year, day))
 
     IO.puts("Done!")
   end
