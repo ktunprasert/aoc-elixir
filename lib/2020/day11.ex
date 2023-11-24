@@ -57,9 +57,6 @@ defmodule Aoc.Y2020.D11 do
             {x, y} when x < 0 or y < 0 or x > rows or y > columns -> nil
             {x, y} -> {{x, y}, {x + i, y + j}}
           end)
-        end)
-        |> Enum.map(fn strm ->
-          strm
           |> Stream.drop(1)
           |> Stream.map(&at(grid, &1))
           |> Enum.reduce_while(0, fn seat, acc ->
