@@ -3,7 +3,8 @@ defmodule AocTest.Y<%= @year %>.D<%= @day %> do
 
   alias Aoc.Y<%= @year %>.D<%= @day %>, as: Solver
 
-  @example ""
+  @example """
+  """
 
   describe "Example case" do
     test "part 1" do
