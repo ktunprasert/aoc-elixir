@@ -22,7 +22,8 @@ defmodule Aoc.MixProject do
   defp deps do
     [
       {:req, "~> 0.4.0"},
-      {:dotenv, "~> 3.1.0", only: [:dev, :test]}
+      {:dotenv, "~> 3.1.0", only: [:dev, :test]},
+      {:benchee, "~> 1.0", only: :dev}
     ]
   end
 end
