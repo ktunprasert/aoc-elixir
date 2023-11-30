@@ -4,24 +4,20 @@ defmodule Aoc.Y2020.D15 do
   import Aoc.Util
 
   def part1(input) do
-    turns = input |> helper()
+    {track, turns} = input |> helper()
 
-    track =
-      turns
-      |> Enum.with_index(1)
-      |> Enum.reduce(%{}, fn {num, idx}, map ->
-        Map.put(map, num, [idx])
-      end)
-
-    Stream.iterate({track, List.last(turns), length(turns)}, fn {track, num, turn} ->
-      play(track, num, turn)
-    end)
+    Stream.iterate({track, List.last(turns), length(turns)}, &play/1)
     |> Enum.find_value(fn {_, num, turn} -> if turn == 2020, do: num end)
   end
 
   def part2(input) do
-    :ok
+    {track, turns} = input |> helper()
+
+    Stream.iterate({track, List.last(turns), length(turns)}, &play/1)
+    |> Enum.find_value(fn {_, num, turn} -> if turn == 30_000_000, do: num end)
   end
+
+  def play({track, num, current_turn}), do: play(track, num, current_turn)
 
   def play(track, num, current_turn) do
     list = Map.get(track, num, [])
@@ -40,6 +36,15 @@ defmodule Aoc.Y2020.D15 do
   end
 
   def helper(input) do
-    input |> parse_lines(",") |> Enum.map(&String.to_integer/1)
+    turns = input |> parse_lines(",") |> Enum.map(&String.to_integer/1)
+
+    track =
+      turns
+      |> Enum.with_index(1)
+      |> Enum.reduce(%{}, fn {num, idx}, map ->
+        Map.put(map, num, [idx])
+      end)
+
+    {track, turns}
   end
 end
