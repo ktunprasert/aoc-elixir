@@ -27,8 +27,7 @@ defmodule AocTest.Y2020.D15 do
     end
 
     test "part 2" do
-      # the input is mega long, so we'll omit this
-      # assert Solver.part2(@example) == 175594
+      # the output takes too long, so we'll omit this
     end
   end
 end

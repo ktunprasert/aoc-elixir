@@ -6,33 +6,29 @@ defmodule Aoc.Y2020.D15 do
   def part1(input) do
     {track, turns} = input |> helper()
 
-    Stream.iterate({track, List.last(turns), length(turns)}, &play/1)
-    |> Enum.find_value(fn {_, num, turn} -> if turn == 2020, do: num end)
+    play(track, List.last(turns), length(turns), 2020)
   end
 
   def part2(input) do
     {track, turns} = input |> helper()
 
-    Stream.iterate({track, List.last(turns), length(turns)}, &play/1)
-    |> Enum.find_value(fn {_, num, turn} -> if turn == 30_000_000, do: num end)
+    play(track, List.last(turns), length(turns), 30_000_000)
   end
 
-  def play({track, num, current_turn}), do: play(track, num, current_turn)
+  def play(_, num, target, target), do: num
 
-  def play(track, num, current_turn) do
-    list = Map.get(track, num, [])
+  def play(track, num, current_turn, target) do
+    {last_1, last_2} = Map.get(track, num, {nil, nil})
 
     n =
-      case list |> length do
-        n when n <= 1 -> 0
-        _ -> Enum.take(list, 2) |> Enum.reduce(&(&2 - &1))
+      case {last_1, last_2} do
+        {x, y} when x == nil or y == nil -> 0
+        {x, y} -> x - y
       end
 
-    {
-      Map.update(track, n, [current_turn + 1], fn lst -> [current_turn + 1 | lst] end),
-      n,
-      current_turn + 1
-    }
+    track = Map.update(track, n, {current_turn + 1, nil}, fn {x, _} -> {current_turn + 1, x} end)
+
+    play(track, n, current_turn + 1, target)
   end
 
   def helper(input) do
@@ -42,7 +38,7 @@ defmodule Aoc.Y2020.D15 do
       turns
       |> Enum.with_index(1)
       |> Enum.reduce(%{}, fn {num, idx}, map ->
-        Map.put(map, num, [idx])
+        Map.put(map, num, {idx, nil})
       end)
 
     {track, turns}
