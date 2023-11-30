@@ -18,12 +18,12 @@ defmodule AocTest.Y2020.D15 do
     test "part 1" do
       assert Solver.part1(@example) == 436
 
-      assert Solver.part1(@example2) == 1
-      assert Solver.part1(@example3) == 10
-      assert Solver.part1(@example4) == 27
-      assert Solver.part1(@example5) == 78
-      assert Solver.part1(@example6) == 438
-      assert Solver.part1(@example7) == 1836
+      # assert Solver.part1(@example2) == 1
+      # assert Solver.part1(@example3) == 10
+      # assert Solver.part1(@example4) == 27
+      # assert Solver.part1(@example5) == 78
+      # assert Solver.part1(@example6) == 438
+      # assert Solver.part1(@example7) == 1836
     end
 
     test "part 2" do

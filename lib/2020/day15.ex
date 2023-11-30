@@ -4,15 +4,42 @@ defmodule Aoc.Y2020.D15 do
   import Aoc.Util
 
   def part1(input) do
-    {track, turns} = input |> helper()
+    turns = input |> helper()
 
-    play(track, List.last(turns), length(turns), 2020)
+    turns |> Enum.with_index(1) |> Enum.each(fn {n, i} -> Process.put(n, {i, nil}) end)
+
+    play_proc(List.last(turns), length(turns), 2020)
   end
 
   def part2(input) do
-    {track, turns} = input |> helper()
+    turns = input |> helper()
 
-    play(track, List.last(turns), length(turns), 30_000_000)
+    turns |> Enum.with_index(1) |> Enum.each(fn {n, i} -> Process.put(n, {i, nil}) end)
+
+    play_proc(List.last(turns), length(turns), 30_000_000)
+  end
+
+  def play_proc(n, target, target), do: n
+
+  def play_proc(prev_num, turn, target) do
+    {last_1, last_2} = Process.get(prev_num, {nil, nil})
+
+    n =
+      case {last_1, last_2} do
+        {nil, nil} -> 0
+        {_, nil} -> 0
+        {x, y} -> x - y
+      end
+
+    new_state =
+      case Process.get(n) do
+        nil -> {turn + 1, nil}
+        {i, _} -> {turn + 1, i}
+      end
+
+    Process.put(n, new_state)
+
+    play_proc(n, turn + 1, target)
   end
 
   def play(_, num, target, target), do: num
@@ -33,14 +60,13 @@ defmodule Aoc.Y2020.D15 do
 
   def helper(input) do
     turns = input |> parse_lines(",") |> Enum.map(&String.to_integer/1)
+    # track =
+    #   turns
+    #   |> Enum.with_index(1)
+    #   |> Enum.reduce(%{}, fn {num, idx}, map ->
+    #     Map.put(map, num, {idx, nil})
+    #   end)
 
-    track =
-      turns
-      |> Enum.with_index(1)
-      |> Enum.reduce(%{}, fn {num, idx}, map ->
-        Map.put(map, num, {idx, nil})
-      end)
-
-    {track, turns}
+    turns
   end
 end
