@@ -8,13 +8,10 @@ defmodule Aoc.Y2023.D1 do
 
     lines
     |> Enum.reduce(0, fn line, acc ->
-      [last, first] =
         case grab_digit(line) do
-          [a, b] -> [a, b]
-          [a] -> [a, a]
+          [last, first] -> first * 10 + last + acc
+          [same] -> same * 10 + same + acc
         end
-
-      first * 10 + last + acc
     end)
   end
 
@@ -38,28 +35,41 @@ defmodule Aoc.Y2023.D1 do
   @digits "one|two|three|four|five|six|seven|eight|nine|\\d"
 
   def part2(input) do
-    re = ~r/(#{@digits})(?:.*(#{@digits}))?/
-
     input
     |> helper()
     |> Enum.reduce(0, fn line, acc ->
-      Regex.run(re, line)
-      |> Enum.take(-2)
-      |> Enum.map(&infer_number/1)
-      |> then(fn [a, b] -> a * 10 + b + acc end)
+        case grab_digit_str(line) do
+          [last, first] -> first * 10 + last + acc
+          [same] -> same * 10 + same + acc
+        end
     end)
   end
 
-  def infer_number("one"), do: 1
-  def infer_number("two"), do: 2
-  def infer_number("three"), do: 3
-  def infer_number("four"), do: 4
-  def infer_number("five"), do: 5
-  def infer_number("six"), do: 6
-  def infer_number("seven"), do: 7
-  def infer_number("eight"), do: 8
-  def infer_number("nine"), do: 9
-  def infer_number(n), do: String.to_integer(n)
+  def grab_digit_str(str), do: grab_digit_str(str, [])
+  def grab_digit_str(<<>>, acc), do: acc
+
+  def grab_digit_str(<<a, rest::binary>>, acc) do
+    a =
+      case {a, rest} do
+        {a, _} when a in ?0..?9 -> a - ?0
+        {?o, <<?n, ?e, _::binary>>} -> 1
+        {?t, <<?w, ?o, _::binary>>} -> 2
+        {?t, <<?h, ?r, ?e, ?e, _::binary>>} -> 3
+        {?f, <<?o, ?u, ?r, _::binary>>} -> 4
+        {?f, <<?i, ?v, ?e, _::binary>>} -> 5
+        {?s, <<?i, ?x, _::binary>>} -> 6
+        {?s, <<?e, ?v, ?e, ?n, _::binary>>} -> 7
+        {?e, <<?i, ?g, ?h, ?t, _::binary>>} -> 8
+        {?n, <<?i, ?n, ?e, _::binary>>} -> 9
+        _ -> nil
+      end
+
+    case {a, acc} do
+      {nil, _} -> grab_digit_str(rest, acc)
+      {a, n} when length(n) < 2 -> grab_digit_str(rest, [a | acc])
+      {a, [_last, first]} -> grab_digit_str(rest, [a, first])
+    end
+  end
 
   def helper(input) do
     input |> parse_lines()
