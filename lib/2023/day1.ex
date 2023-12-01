@@ -28,21 +28,21 @@ defmodule Aoc.Y2023.D1 do
     |> Enum.reduce(0, fn line, acc ->
       Regex.run(re, line)
       |> Enum.take(-2)
-      |> Enum.map(fn
-        "one" -> 1
-        "two" -> 2
-        "three" -> 3
-        "four" -> 4
-        "five" -> 5
-        "six" -> 6
-        "seven" -> 7
-        "eight" -> 8
-        "nine" -> 9
-        <<n::binary-size(1)>> -> String.to_integer(n)
-      end)
+      |> Enum.map(&infer_number/1)
       |> then(fn [a, b] -> a * 10 + b + acc end)
     end)
   end
+
+  def infer_number("one"), do: 1
+  def infer_number("two"), do: 2
+  def infer_number("three"), do: 3
+  def infer_number("four"), do: 4
+  def infer_number("five"), do: 5
+  def infer_number("six"), do: 6
+  def infer_number("seven"), do: 7
+  def infer_number("eight"), do: 8
+  def infer_number("nine"), do: 9
+  def infer_number(n), do: String.to_integer(n)
 
   def helper(input) do
     input |> parse_lines()
