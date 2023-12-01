@@ -6,9 +6,11 @@ defmodule Aoc.Y2023.D1 do
   def part1(input) do
     lines = helper(input)
 
+    re = ~r/(\d)(?:.*(\d))?/
+
     lines
     |> Enum.reduce(0, fn line, acc ->
-      Regex.run(~r/(\d)(?:.*(\d))?/, line)
+      Regex.run(re, line)
       |> Enum.take(-2)
       |> Enum.join()
       |> String.to_integer()
@@ -19,10 +21,12 @@ defmodule Aoc.Y2023.D1 do
   @digits "one|two|three|four|five|six|seven|eight|nine|\\d"
 
   def part2(input) do
+    re = ~r/(#{@digits})(?:.*(#{@digits}))?/
+
     input
     |> helper()
     |> Enum.reduce(0, fn line, acc ->
-      Regex.run(~r/(#{@digits})(?:.*(#{@digits}))?/, line)
+      Regex.run(re, line)
       |> Enum.take(-2)
       |> Enum.map(fn
         "one" -> 1
