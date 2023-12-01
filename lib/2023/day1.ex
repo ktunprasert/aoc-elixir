@@ -6,16 +6,33 @@ defmodule Aoc.Y2023.D1 do
   def part1(input) do
     lines = helper(input)
 
-    re = ~r/(\d)(?:.*(\d))?/
-
     lines
     |> Enum.reduce(0, fn line, acc ->
-      Regex.run(re, line)
-      |> Enum.take(-2)
-      |> Enum.join()
-      |> String.to_integer()
-      |> then(fn n -> n + acc end)
+      [last, first] =
+        case grab_digit(line) do
+          [a, b] -> [a, b]
+          [a] -> [a, a]
+        end
+
+      first * 10 + last + acc
     end)
+  end
+
+  def grab_digit(str), do: grab_digit(str, [])
+  def grab_digit(<<>>, acc), do: acc
+
+  def grab_digit(<<a, rest::binary>>, acc) do
+    a =
+      case a do
+        a when a in ?1..?9 -> a - ?0
+        _ -> nil
+      end
+
+    case {a, acc} do
+      {nil, _} -> grab_digit(rest, acc)
+      {a, n} when length(n) < 2 -> grab_digit(rest, [a | acc])
+      {a, [_last, first]} -> grab_digit(rest, [a, first])
+    end
   end
 
   @digits "one|two|three|four|five|six|seven|eight|nine|\\d"
