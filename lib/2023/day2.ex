@@ -41,19 +41,25 @@ defmodule Aoc.Y2023.D2 do
     |> Enum.reduce(0, fn line, acc ->
       [_, gamestr] = String.split(line, ": ")
 
-      prod =
-        gamestr
-        |> String.split(";\s")
-        |> Enum.reduce({0, 0, 0}, fn str, cube ->
-          new_cube =
-            String.split(str, ",\s")
-            |> Enum.reduce({0, 0, 0}, fn str, cube ->
-              play_cube(str, cube)
-            end)
+      plays = String.split(gamestr, [";\s", ",\s"])
 
-          cube <~> new_cube
-        end)
-        |> Tuple.product()
+      prod = plays
+      |> Enum.group_by(
+        fn
+          <<_, ?\s, rest::binary>> -> rest
+          <<_::binary-size(2), ?\s, rest::binary>> -> rest
+        end,
+        fn
+          <<n, ?\s, _rest::binary>> -> n - ?0
+          <<n, m, ?\s, _rest::binary>> -> (n - ?0) * 10 + m - ?0
+        end
+      )
+      |> then(&{
+        Enum.max(Map.get(&1, "red", [0])),
+        Enum.max(Map.get(&1, "green", [0])),
+        Enum.max(Map.get(&1, "blue", [0])),
+      })
+      |> Tuple.product()
 
       acc + prod
     end)
