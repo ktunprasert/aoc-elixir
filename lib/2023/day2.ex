@@ -59,20 +59,21 @@ defmodule Aoc.Y2023.D2 do
     end)
   end
 
-  def play_cube(<<i, j, rest::binary>>, {r, g, b}) do
-    num =
-      case {i, j} do
-        {i, j} when i in ?0..?9 and j in ?0..?9 -> (i - ?0) * 10 + (j - ?0)
-        {i, ?\s} when i in ?0..?9 -> i - ?0
-      end
+  def play_cube(<<i, ?\s, rest::binary>>, {r, g, b}) do
+    case rest do
+      "red" -> {r + i - ?0, g, b}
+      "green" -> {r, g + i - ?0, b}
+      "blue" -> {r, g, b + i - ?0}
+    end
+  end
+
+  def play_cube(<<i, j, ?\s, rest::binary>>, {r, g, b}) do
+    num = (i - ?0) * 10 + (j - ?0)
 
     case rest do
       "red" -> {r + num, g, b}
-      " red" -> {r + num, g, b}
       "green" -> {r, g + num, b}
-      " green" -> {r, g + num, b}
       "blue" -> {r, g, b + num}
-      " blue" -> {r, g, b + num}
     end
   end
 
