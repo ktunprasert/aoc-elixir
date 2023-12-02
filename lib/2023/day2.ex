@@ -7,8 +7,10 @@ defmodule Aoc.Y2023.D2 do
   def part1(input) do
     lines = input |> parse_lines()
 
+    start = input |> String.at(5) |> String.to_integer()
+
     lines
-    |> Enum.reduce({1, 0}, fn line, {n, acc} ->
+    |> Enum.reduce({start, 0}, fn line, {n, acc} ->
       [_, gamestr] = String.split(line, ": ")
 
       state =
