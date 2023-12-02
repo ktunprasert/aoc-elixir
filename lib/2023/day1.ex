@@ -46,19 +46,19 @@ defmodule Aoc.Y2023.D1 do
   def grab_digit_str(str), do: grab_digit_str(str, [])
   def grab_digit_str(<<>>, acc), do: acc
 
-  def grab_digit_str(<<a, rest::binary>> = str, acc) do
+  def grab_digit_str(<<_head, rest::binary>> = str, acc) do
     a =
-      case {a, str} do
-        {a, _} when a in ?0..?9 -> a - ?0
-        {_, <<"one", _::binary>>} -> 1
-        {_, <<"two", _::binary>>} -> 2
-        {_, <<"three", _::binary>>} -> 3
-        {_, <<"four", _::binary>>} -> 4
-        {_, <<"five", _::binary>>} -> 5
-        {_, <<"six", _::binary>>} -> 6
-        {_, <<"seven", _::binary>>} -> 7
-        {_, <<"eight", _::binary>>} -> 8
-        {_, <<"nine", _::binary>>} -> 9
+      case str do
+        <<a, _::binary>> when a in ?0..?9 -> a - ?0
+        <<"one", _::binary>> -> 1
+        <<"two", _::binary>> -> 2
+        <<"three", _::binary>> -> 3
+        <<"four", _::binary>> -> 4
+        <<"five", _::binary>> -> 5
+        <<"six", _::binary>> -> 6
+        <<"seven", _::binary>> -> 7
+        <<"eight", _::binary>> -> 8
+        <<"nine", _::binary>> -> 9
         _ -> nil
       end
 
