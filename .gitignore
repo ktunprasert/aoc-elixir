@@ -25,3 +25,6 @@ aoc-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 .env
+
+# big boys
+priv/inputs/**/bigboy*
