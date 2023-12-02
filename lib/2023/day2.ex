@@ -36,7 +36,27 @@ defmodule Aoc.Y2023.D2 do
   end
 
   def part2(input) do
-    :ok
+    input
+    |> parse_lines()
+    |> Enum.reduce(0, fn line, acc ->
+      [_, gamestr] = String.split(line, ": ")
+
+      prod =
+        gamestr
+        |> String.split(";\s")
+        |> Enum.reduce({0, 0, 0}, fn str, cube ->
+          new_cube =
+            String.split(str, ",\s")
+            |> Enum.reduce({0, 0, 0}, fn str, cube ->
+              play_cube(cube, str)
+            end)
+
+          cube <~> new_cube
+        end)
+        |> Tuple.product()
+
+      acc + prod
+    end)
   end
 
   def play_cube({r, g, b}, str) do
@@ -45,6 +65,10 @@ defmodule Aoc.Y2023.D2 do
       {n, " green"} -> {r, g + n, b}
       {n, " blue"} -> {r, g, b + n}
     end
+  end
+
+  def {a, b, c} <~> {x, y, z} do
+    {max(a, x), max(b, y), max(c, z)}
   end
 
   def {a, b, c} >>> {x, y, z} do
