@@ -18,7 +18,7 @@ defmodule Aoc.Y2023.D2 do
           play =
             String.split(str, ",\s")
             |> Enum.reduce({0, 0, 0}, fn str, cube ->
-              play_cube(cube, str)
+              play_cube(str, cube)
             end)
 
           cond do
@@ -48,7 +48,7 @@ defmodule Aoc.Y2023.D2 do
           new_cube =
             String.split(str, ",\s")
             |> Enum.reduce({0, 0, 0}, fn str, cube ->
-              play_cube(cube, str)
+              play_cube(str, cube)
             end)
 
           cube <~> new_cube
@@ -59,11 +59,20 @@ defmodule Aoc.Y2023.D2 do
     end)
   end
 
-  def play_cube({r, g, b}, str) do
-    case Integer.parse(str) do
-      {n, " red"} -> {r + n, g, b}
-      {n, " green"} -> {r, g + n, b}
-      {n, " blue"} -> {r, g, b + n}
+  def play_cube(<<i, j, rest::binary>>, {r, g, b}) do
+    num =
+      case {i, j} do
+        {i, j} when i in ?0..?9 and j in ?0..?9 -> (i - ?0) * 10 + (j - ?0)
+        {i, ?\s} when i in ?0..?9 -> i - ?0
+      end
+
+    case rest do
+      "red" -> {r + num, g, b}
+      " red" -> {r + num, g, b}
+      "green" -> {r, g + num, b}
+      " green" -> {r, g + num, b}
+      "blue" -> {r, g, b + num}
+      " blue" -> {r, g, b + num}
     end
   end
 
