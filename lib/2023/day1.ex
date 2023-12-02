@@ -8,10 +8,10 @@ defmodule Aoc.Y2023.D1 do
 
     lines
     |> Enum.reduce(0, fn line, acc ->
-        case grab_digit(line) do
-          [last, first] -> first * 10 + last + acc
-          [same] -> same * 10 + same + acc
-        end
+      case grab_digit(line) do
+        [last, first] -> first * 10 + last + acc
+        [same] -> same * 10 + same + acc
+      end
     end)
   end
 
@@ -32,35 +32,33 @@ defmodule Aoc.Y2023.D1 do
     end
   end
 
-  @digits "one|two|three|four|five|six|seven|eight|nine|\\d"
-
   def part2(input) do
     input
     |> helper()
     |> Enum.reduce(0, fn line, acc ->
-        case grab_digit_str(line) do
-          [last, first] -> first * 10 + last + acc
-          [same] -> same * 10 + same + acc
-        end
+      case grab_digit_str(line) do
+        [last, first] -> first * 10 + last + acc
+        [same] -> same * 10 + same + acc
+      end
     end)
   end
 
   def grab_digit_str(str), do: grab_digit_str(str, [])
   def grab_digit_str(<<>>, acc), do: acc
 
-  def grab_digit_str(<<a, rest::binary>>, acc) do
+  def grab_digit_str(<<a, rest::binary>> = str, acc) do
     a =
-      case {a, rest} do
+      case {a, str} do
         {a, _} when a in ?0..?9 -> a - ?0
-        {?o, <<?n, ?e, _::binary>>} -> 1
-        {?t, <<?w, ?o, _::binary>>} -> 2
-        {?t, <<?h, ?r, ?e, ?e, _::binary>>} -> 3
-        {?f, <<?o, ?u, ?r, _::binary>>} -> 4
-        {?f, <<?i, ?v, ?e, _::binary>>} -> 5
-        {?s, <<?i, ?x, _::binary>>} -> 6
-        {?s, <<?e, ?v, ?e, ?n, _::binary>>} -> 7
-        {?e, <<?i, ?g, ?h, ?t, _::binary>>} -> 8
-        {?n, <<?i, ?n, ?e, _::binary>>} -> 9
+        {_, <<"one", _::binary>>} -> 1
+        {_, <<"two", _::binary>>} -> 2
+        {_, <<"three", _::binary>>} -> 3
+        {_, <<"four", _::binary>>} -> 4
+        {_, <<"five", _::binary>>} -> 5
+        {_, <<"six", _::binary>>} -> 6
+        {_, <<"seven", _::binary>>} -> 7
+        {_, <<"eight", _::binary>>} -> 8
+        {_, <<"nine", _::binary>>} -> 9
         _ -> nil
       end
 
