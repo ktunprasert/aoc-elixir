@@ -43,23 +43,21 @@ defmodule Aoc.Y2023.D2 do
 
       plays = String.split(gamestr, [";\s", ",\s"])
 
-      prod = plays
-      |> Enum.group_by(
-        fn
-          <<_, ?\s, rest::binary>> -> rest
-          <<_::binary-size(2), ?\s, rest::binary>> -> rest
-        end,
-        fn
-          <<n, ?\s, _rest::binary>> -> n - ?0
-          <<n, m, ?\s, _rest::binary>> -> (n - ?0) * 10 + m - ?0
-        end
-      )
-      |> then(&{
-        Enum.max(Map.get(&1, "red", [0])),
-        Enum.max(Map.get(&1, "green", [0])),
-        Enum.max(Map.get(&1, "blue", [0])),
-      })
-      |> Tuple.product()
+      prod =
+        plays
+        |> Enum.group_by(
+          fn
+            <<_, ?\s, color::binary>> -> color
+            <<_::binary-size(2), ?\s, color::binary>> -> color
+          end,
+          fn
+            <<n, ?\s, _rest::binary>> -> n - ?0
+            <<n, m, ?\s, _rest::binary>> -> (n - ?0) * 10 + m - ?0
+          end
+        )
+        |> Enum.reduce(1, fn {_, lst}, acc ->
+          acc * Enum.max(lst)
+        end)
 
       acc + prod
     end)
