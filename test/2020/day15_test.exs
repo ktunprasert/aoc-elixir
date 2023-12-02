@@ -7,12 +7,12 @@ defmodule AocTest.Y2020.D15 do
   0,3,6
   """
 
-  @example2 "1,3,2"
-  @example3 "2,1,3"
-  @example4 "1,2,3"
-  @example5 "2,3,1"
-  @example6 "3,2,1"
-  @example7 "3,1,2"
+  # @example2 "1,3,2"
+  # @example3 "2,1,3"
+  # @example4 "1,2,3"
+  # @example5 "2,3,1"
+  # @example6 "3,2,1"
+  # @example7 "3,1,2"
 
   describe "Example case" do
     test "part 1" do
