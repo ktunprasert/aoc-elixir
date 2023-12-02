@@ -38,12 +38,12 @@ defmodule Aoc.Y2023.D2 do
   def part2(input) do
     input
     |> parse_lines()
-    |> Enum.reduce(0, fn line, acc ->
-      [_, gamestr] = String.split(line, ": ")
+    |> Task.async_stream(
+      fn line ->
+        [_, gamestr] = String.split(line, ": ")
 
-      plays = String.split(gamestr, [";\s", ",\s"])
+        plays = String.split(gamestr, [";\s", ",\s"])
 
-      prod =
         plays
         |> Enum.group_by(
           fn
@@ -58,9 +58,10 @@ defmodule Aoc.Y2023.D2 do
         |> Enum.reduce(1, fn {_, lst}, acc ->
           acc * Enum.max(lst)
         end)
-
-      acc + prod
-    end)
+      end,
+      ordered: false
+    )
+    |> Enum.reduce(0, fn {:ok, n}, acc -> acc + n end)
   end
 
   def play_cube(<<i, ?\s, rest::binary>>, {r, g, b}) do
