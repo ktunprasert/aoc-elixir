@@ -6,7 +6,7 @@ defmodule Aoc.Y2023.D3 do
   def part1(input) do
     {_, nums, syms} = input |> helper()
 
-    for {:sym, y, x} <- syms,
+    for {:sym, _, y, x} <- syms,
         {n, yrange, x_i..x_j} <- nums,
         y in yrange && x in (x_i - 1)..(x_j + 1),
         into: MapSet.new() do
@@ -16,6 +16,11 @@ defmodule Aoc.Y2023.D3 do
   end
 
   def part2(input) do
+    {_, num, syms} = input |> helper()
+
+    syms = Enum.filter(syms, fn {_, sym, _, _} -> sym == ?* end)
+
+    dbg(syms)
     :ok
   end
 
@@ -45,11 +50,12 @@ defmodule Aoc.Y2023.D3 do
 
   # when symbols
   def parse_line(<<s, rest::binary>>, acc, num, x, y) do
+    dbg(s)
     if num != 0 do
       acc = [{:num, num, x..(y - 1)} | acc]
-      parse_line(rest, [{:sym, <<s>>, y} | acc], 0, y + 1, y + 1)
+      parse_line(rest, [{:sym, s, y} | acc], 0, y + 1, y + 1)
     else
-      parse_line(rest, [{:sym, <<s>>, y} | acc], 0, x + 1, y + 1)
+      parse_line(rest, [{:sym, s, y} | acc], 0, x + 1, y + 1)
     end
   end
 
@@ -64,7 +70,7 @@ defmodule Aoc.Y2023.D3 do
           el, {nums, syms} ->
             case el do
               {:num, n, range} -> {[{n, (y - 1)..(y + 1), range} | nums], syms}
-              {:sym, _, x} -> {nums, [{:sym, y, x} | syms]}
+              {:sym, sym, x} -> {nums, [{:sym, sym, y, x} | syms]}
             end
         end)
 
