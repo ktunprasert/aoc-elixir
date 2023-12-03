@@ -4,24 +4,7 @@ defmodule Aoc.Y2023.D3 do
   import Aoc.Util
 
   def part1(input) do
-    lines = input |> parse_lines()
-
-    {_, nums, syms} =
-      lines
-      |> Enum.reduce({0, [], []}, fn line, {y, nums, syms} ->
-        parsed = line |> parse_line()
-
-        {nums, syms} =
-          Enum.reduce(parsed, {nums, syms}, fn
-            el, {nums, syms} ->
-              case el do
-                {:num, n, range} -> {[{n, (y - 1)..(y + 1), range} | nums], syms}
-                {:sym, x} -> {nums, [{:sym, y, x} | syms]}
-              end
-          end)
-
-        {y + 1, nums, syms}
-      end)
+    {_, nums, syms} = input |> helper()
 
     for {:sym, y, x} <- syms,
         {n, yrange, x_i..x_j} <- nums,
@@ -64,13 +47,28 @@ defmodule Aoc.Y2023.D3 do
   def parse_line(<<s, rest::binary>>, acc, num, x, y) do
     if num != 0 do
       acc = [{:num, num, x..(y - 1)} | acc]
-      parse_line(rest, [{:sym, y} | acc], 0, y + 1, y + 1)
+      parse_line(rest, [{:sym, <<s>>, y} | acc], 0, y + 1, y + 1)
     else
-      parse_line(rest, [{:sym, y} | acc], 0, x + 1, y + 1)
+      parse_line(rest, [{:sym, <<s>>, y} | acc], 0, x + 1, y + 1)
     end
   end
 
   def helper(input) do
-    input |> parse_lines()
+    input
+    |> parse_lines()
+    |> Enum.reduce({0, [], []}, fn line, {y, nums, syms} ->
+      parsed = line |> parse_line()
+
+      {nums, syms} =
+        Enum.reduce(parsed, {nums, syms}, fn
+          el, {nums, syms} ->
+            case el do
+              {:num, n, range} -> {[{n, (y - 1)..(y + 1), range} | nums], syms}
+              {:sym, _, x} -> {nums, [{:sym, y, x} | syms]}
+            end
+        end)
+
+      {y + 1, nums, syms}
+    end)
   end
 end
