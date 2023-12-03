@@ -25,11 +25,11 @@ defmodule AocTest.Y2023.D3 do
       assert Solver.part1("#123\n...#") == 123
 
       assert Solver.part1("...#") == 0
-      # 123 -> -1..3 bound | 0..2 real
+      # # 123 -> -1..3 bound | 0..2 real
       assert Solver.part1("123...\n#") == 123
-      # 123 -> 2..6 bound | 3..5 real
+      # # 123 -> 2..6 bound | 3..5 real
       assert Solver.part1("..#123...") == 123
-      # 123 -> 1..5 bound | 2..4 real
+      # # 123 -> 1..5 bound | 2..4 real
       assert Solver.part1("..123#...") == 123
 
       assert Solver.part1("12#3") == 15
@@ -38,7 +38,7 @@ defmodule AocTest.Y2023.D3 do
     end
 
     test "part 2" do
-      assert Solver.part2(@example) == :ok
+      assert Solver.part2(@example) == 467835
     end
   end
 end

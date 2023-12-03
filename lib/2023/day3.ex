@@ -16,12 +16,24 @@ defmodule Aoc.Y2023.D3 do
   end
 
   def part2(input) do
-    {_, num, syms} = input |> helper()
+    {_, nums, syms} = input |> helper()
 
     syms = Enum.filter(syms, fn {_, sym, _, _} -> sym == ?* end)
 
-    dbg(syms)
-    :ok
+    syms
+    |> Enum.map(fn {_, _, y, x} ->
+      Enum.reduce(nums, [], fn {n, yrange, x_i..x_j}, acc ->
+        if y in yrange && x in (x_i - 1)..(x_j + 1) do
+          [{n, yrange, x_i..x_j} | acc]
+        else
+          acc
+        end
+      end)
+    end)
+    |> Enum.reduce(0, fn
+      [{i, _, _}, {j, _, _}], acc -> acc + i * j
+      _, acc -> acc
+    end)
   end
 
   def parse_line(str), do: parse_line(str, [], 0, 0, 0)
@@ -50,7 +62,6 @@ defmodule Aoc.Y2023.D3 do
 
   # when symbols
   def parse_line(<<s, rest::binary>>, acc, num, x, y) do
-    dbg(s)
     if num != 0 do
       acc = [{:num, num, x..(y - 1)} | acc]
       parse_line(rest, [{:sym, s, y} | acc], 0, y + 1, y + 1)
