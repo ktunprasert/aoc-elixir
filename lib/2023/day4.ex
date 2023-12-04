@@ -7,10 +7,9 @@ defmodule Aoc.Y2023.D4 do
     lines = helper(input)
 
     lines
-    |> Enum.reduce(0, fn [winning, playing], acc ->
+    |> Enum.reduce(0, fn matches, acc ->
       sum =
-        case MapSet.intersection(MapSet.new(winning), MapSet.new(playing))
-             |> Enum.count() do
+        case matches do
           0 -> 0
           n -> 2 ** (n - 1)
         end
@@ -22,15 +21,13 @@ defmodule Aoc.Y2023.D4 do
   def part2(input) do
     input
     |> helper()
-    |> Enum.reduce({1, %{}}, fn [winning, playing], {card_n, map} ->
-      matches = Enum.count(MapSet.intersection(MapSet.new(winning), MapSet.new(playing)))
-
+    |> Enum.reduce({1, %{}}, fn matches, {card_n, map} ->
       map = Map.update(map, card_n, 1, fn x -> x + 1 end)
 
       if matches == 0 do
         {card_n + 1, map}
       else
-        copies = Map.get(map, card_n)
+        %{^card_n => copies} = map
 
         map =
           (card_n + 1)..(card_n + matches)
@@ -40,8 +37,6 @@ defmodule Aoc.Y2023.D4 do
 
         {card_n + 1, map}
       end
-      |> IO.inspect(label: "card #{card_n} matches #{matches}")
-
     end)
     |> elem(1)
     |> Enum.reduce(0, fn {_, copies}, acc -> acc + copies end)
@@ -68,14 +63,11 @@ defmodule Aoc.Y2023.D4 do
     |> Enum.map(fn line ->
       [_card, winning, playing] = String.split(line, [": ", " | "], trim: true)
 
-      [winning, playing] =
-        [winning, playing]
-        |> Enum.map(&parse_num/1)
-
-      # n = String.split(card, " ") |> List.last()
-      # {card_n, _} = Integer.parse(n)
-
-      [winning, playing]
+      :ordsets.intersection(
+        winning |> parse_num() |> :ordsets.to_list(),
+        playing |> parse_num() |> :ordsets.to_list()
+      )
+      |> :ordsets.size()
     end)
   end
 end
