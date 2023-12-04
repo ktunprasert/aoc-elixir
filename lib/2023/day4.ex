@@ -63,11 +63,11 @@ defmodule Aoc.Y2023.D4 do
     |> Enum.map(fn line ->
       [_card, winning, playing] = String.split(line, [": ", " | "], trim: true)
 
-      :ordsets.intersection(
-        winning |> parse_num() |> :ordsets.to_list(),
-        playing |> parse_num() |> :ordsets.to_list()
+      MapSet.intersection(
+        winning |> parse_num() |> MapSet.new(),
+        playing |> parse_num() |> MapSet.new()
       )
-      |> :ordsets.size()
+      |> MapSet.size()
     end)
   end
 end
