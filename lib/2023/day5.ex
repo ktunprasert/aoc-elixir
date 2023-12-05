@@ -22,25 +22,13 @@ defmodule Aoc.Y2023.D5 do
       |> Enum.map(&String.to_integer/1)
       |> Enum.chunk_every(3)
       |> Enum.map(fn [a, b, c] ->
-        fn i ->
-          if i in b..(b + c - 1) do
-            a + (i - b)
-          else
-            nil
-          end
-        end
+        {a, b..(b + c - 1), b}
       end)
+      |> chained(fn i -> i end)
     end)
-    |> Enum.reduce(seeds, fn pipe_fns, seeds ->
+    |> Enum.reduce(seeds, fn f, seeds ->
       seeds
-      |> Enum.map(fn seed ->
-        Enum.reduce_while(pipe_fns, seed, fn f, acc ->
-          case f.(seed) do
-            nil -> {:cont, acc}
-            found -> {:halt, found}
-          end
-        end)
-      end)
+      |> Enum.map(&f.(&1))
     end)
     |> Enum.min()
   end
@@ -83,7 +71,18 @@ defmodule Aoc.Y2023.D5 do
       end)
     end)
     |> Enum.min()
+  end
 
+  def chained([], fn_acc), do: fn_acc
+
+  def chained([{a, range, b} | fns], fn_acc) do
+    chained(fns, fn i ->
+      if i in range do
+        a + (i - b)
+      else
+        fn_acc.(i)
+      end
+    end)
   end
 
   def helper(input) do
