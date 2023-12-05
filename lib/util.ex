@@ -9,4 +9,9 @@ defmodule Aoc.Util do
       end
     end)
   end
+
+  def d(data, opts \\ []) do
+    default = [charlists: :as_lists]
+    dbg(data, Keyword.merge(default, opts))
+  end
 end
