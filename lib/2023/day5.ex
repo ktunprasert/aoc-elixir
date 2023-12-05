@@ -34,17 +34,12 @@ defmodule Aoc.Y2023.D5 do
     |> Enum.reduce(seeds, fn pipe_fns, seeds ->
       seeds
       |> Enum.map(fn seed ->
-        case Enum.map(pipe_fns, & &1.(seed))
-             |> Enum.find_value(nil, fn x ->
-               if x != nil do
-                 x
-               else
-                 false
-               end
-             end) do
-          nil -> seed
-          found -> found
-        end
+        Enum.reduce_while(pipe_fns, seed, fn f, acc ->
+          case f.(seed) do
+            nil -> {:cont, acc}
+            found -> {:halt, found}
+          end
+        end)
       end)
     end)
     |> Enum.min()
