@@ -6,9 +6,18 @@ defmodule Aoc.MixProject do
       app: :aoc,
       version: "0.1.0",
       elixir: "~> 1.15",
-      start_permanent: Mix.env() == :prod,
+      # start_permanent: Mix.env() == :prod,
+      start_concurrently: true,
+      start_permanent: true,
       deps: deps(),
-      escript: escript()
+      escript: escript(),
+      releases: [
+        demo: [
+          include_executables_for: [:unix],
+          applications: [runtime_tools: :permanent],
+          # steps: [:assemble, :tar]
+        ]
+      ]
     ]
   end
 
