@@ -16,14 +16,11 @@ defmodule Aoc.Y2023.D5 do
 
     pipelines
     |> Enum.map(fn mapstr ->
-      maps =
-        mapstr
-        |> String.split()
-        |> Enum.drop(2)
-        |> Enum.map(&String.to_integer/1)
-        |> Enum.chunk_every(3)
-
-      maps
+      mapstr
+      |> String.split()
+      |> Enum.drop(2)
+      |> Enum.map(&String.to_integer/1)
+      |> Enum.chunk_every(3)
       |> Enum.map(fn [a, b, c] ->
         fn i ->
           if i in b..(b + c - 1) do
@@ -37,9 +34,16 @@ defmodule Aoc.Y2023.D5 do
     |> Enum.reduce(seeds, fn pipe_fns, seeds ->
       seeds
       |> Enum.map(fn seed ->
-        case Enum.map(pipe_fns, & &1.(seed)) |> Enum.filter(&(&1 != nil)) do
-          [found] -> found
-          [] -> seed
+        case Enum.map(pipe_fns, & &1.(seed))
+             |> Enum.find_value(nil, fn x ->
+               if x != nil do
+                 x
+               else
+                 false
+               end
+             end) do
+          nil -> seed
+          found -> found
         end
       end)
     end)
@@ -47,29 +51,48 @@ defmodule Aoc.Y2023.D5 do
   end
 
   def part2(input) do
-    :ok
+    [seeds | pipelines] =
+      input
+      |> helper()
+
+    seeds =
+      seeds
+      |> String.split()
+      |> Enum.drop(1)
+      |> Enum.map(&String.to_integer/1)
+      |> Enum.chunk_every(2)
+      |> Enum.flat_map(fn [a, b] -> a..(a + b - 1) |> Enum.to_list() end)
+
+    pipelines
+    |> Enum.map(fn mapstr ->
+      mapstr
+      |> String.split()
+      |> Enum.drop(2)
+      |> Enum.map(&String.to_integer/1)
+      |> Enum.chunk_every(3)
+      |> Enum.map(fn [a, b, c] ->
+        fn i ->
+          if i in b..(b + c - 1) do
+            a + (i - b)
+          else
+            nil
+          end
+        end
+      end)
+    end)
+    |> Enum.reduce(seeds, fn pipe_fns, seeds ->
+      seeds
+      |> Enum.map(fn seed ->
+        Enum.reduce_while(pipe_fns, seed, fn f, acc ->
+          case f.(seed) do
+            nil -> {:cont, acc}
+            found -> {:halt, found}
+          end
+        end)
+      end)
+    end)
+    |> Enum.min()
   end
-
-  # def apply_pipeline(seed, pipeline) do
-  # end
-
-  def parse_int(line), do: parse_int(line, [])
-
-  def parse_int(<<>>, acc), do: acc |> Enum.reverse()
-
-  def parse_int(<<a, sp, rest::binary>>, acc) when a in ?0..?9 and sp in [?\s, ?\n],
-    do: parse_int(rest, [a - ?0 | acc])
-
-  def parse_int(<<a, b, sp, rest::binary>>, acc) when a in ?0..?9 and sp in [?\s, ?\n],
-    do: parse_int(rest, [(a - ?0) * 10 + b - ?0 | acc])
-
-  def parse_int(<<a, b, rest::binary>>, acc) when a in ?0..?9,
-    do: parse_int(rest, [(a - ?0) * 10 + b - ?0 | acc])
-
-  def parse_int(<<a, rest::binary>>, acc) when a in ?0..?9,
-    do: parse_int(rest, [a - ?0 | acc])
-
-  def parse_int(<<_, rest::binary>>, acc), do: parse_int(rest, acc)
 
   def helper(input) do
     input |> parse_lines("\n\n")
