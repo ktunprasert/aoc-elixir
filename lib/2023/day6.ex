@@ -4,7 +4,10 @@ defmodule Aoc.Y2023.D6 do
   import Aoc.Util
 
   def part1(input) do
-    races = helper(input)
+    races =
+      helper(input)
+      |> Enum.map(&Enum.map(&1, fn i -> String.to_integer(i) end))
+      |> Enum.zip()
 
     races
     |> Enum.reduce(1, fn {time, dist}, acc ->
@@ -24,7 +27,21 @@ defmodule Aoc.Y2023.D6 do
   end
 
   def part2(input) do
-    :ok
+    {time, dist} =
+      helper(input)
+      |> Enum.map(&(Enum.join(&1) |> String.to_integer()))
+      |> List.to_tuple()
+
+    Enum.reduce_while(1..(time - 1), 0, fn i, acc ->
+      moved = (time - i) * i
+
+      case {acc, moved} do
+        {0, n} when n < dist -> {:cont, acc}
+        {_, n} when n > dist -> {:cont, acc + 1}
+        {_, n} when n < dist -> {:halt, acc}
+        _ -> {:cont, acc}
+      end
+    end)
   end
 
   def helper(input) do
@@ -35,8 +52,6 @@ defmodule Aoc.Y2023.D6 do
         line
         |> String.split()
         |> Enum.drop(1)
-        |> Enum.map(&String.to_integer/1)
     end)
-    |> Enum.zip()
   end
 end
