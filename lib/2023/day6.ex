@@ -10,20 +10,15 @@ defmodule Aoc.Y2023.D6 do
       |> Enum.zip()
 
     races
-    |> Enum.reduce(1, fn {time, dist}, acc ->
-      1..(time - 1)
-      |> Enum.reduce_while(0, fn i, acc ->
-        distance = (time - i) * i
+    |> Enum.reduce(1, fn {t, d}, acc -> acc * win_quadratic(t, d) end)
+  end
 
-        case {acc, distance} do
-          {0, n} when n < dist -> {:cont, acc}
-          {_, n} when n > dist -> {:cont, acc + 1}
-          {_, n} when n < dist -> {:halt, acc}
-          _ -> {:cont, acc}
-        end
-      end)
-      |> then(fn possible -> acc * possible end)
-    end)
+  def win_quadratic(time, distance) do
+    disc = :math.sqrt(time * time - 4 * distance)
+    t1 = (time + disc) / 2.0
+    t2 = (time - disc) / 2.0
+
+    ceil(t1) - floor(t2) - 1
   end
 
   def part2(input) do
@@ -32,16 +27,7 @@ defmodule Aoc.Y2023.D6 do
       |> Enum.map(&(Enum.join(&1) |> String.to_integer()))
       |> List.to_tuple()
 
-    Enum.reduce_while(1..(time - 1), 0, fn i, acc ->
-      moved = (time - i) * i
-
-      case {acc, moved} do
-        {0, n} when n < dist -> {:cont, acc}
-        {_, n} when n > dist -> {:cont, acc + 1}
-        {_, n} when n < dist -> {:halt, acc}
-        _ -> {:cont, acc}
-      end
-    end)
+    win_quadratic(time, dist)
   end
 
   def helper(input) do
@@ -51,7 +37,7 @@ defmodule Aoc.Y2023.D6 do
       line ->
         line
         |> String.split()
-        |> Enum.drop(1)
+        |> tl()
     end)
   end
 end
