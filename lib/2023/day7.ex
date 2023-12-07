@@ -6,9 +6,8 @@ defmodule Aoc.Y2023.D7 do
   def part1(input) do
     input
     |> helper
-    |> Enum.group_by(
-      fn [cards, _bid] -> determine_kind(cards) end,
-      fn [cards, bid] ->
+    |> Enum.map(fn [cards, bid] ->
+      bitlist =
         cards
         |> String.to_charlist()
         |> Enum.map(fn
@@ -19,11 +18,14 @@ defmodule Aoc.Y2023.D7 do
           ?T -> 10
           c -> c - ?0
         end)
-        |> List.to_tuple()
-        |> Tuple.append(bid)
-      end
-    )
-    |> determine_rank_score()
+
+      [determine_kind(cards), bitlist, bid]
+    end)
+    |> Enum.sort()
+    |> Enum.with_index(1)
+    |> Enum.reduce(0, fn {[_kind, _, bid], idx}, acc ->
+      acc + bid * idx
+    end)
   end
 
   def part2(input) do
