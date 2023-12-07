@@ -23,12 +23,7 @@ defmodule Aoc.Y2023.D7 do
         |> Tuple.append(bid)
       end
     )
-    |> Enum.flat_map(fn {kind, lst} -> lst |> Enum.map(&Tuple.insert_at(&1, 0, kind)) end)
-    |> Enum.sort()
-    |> Enum.reduce({0, 1}, fn {_kind, _, _, _, _, _, bid}, {acc, idx} ->
-      {acc + bid * idx, idx + 1}
-    end)
-    |> elem(0)
+    |> determine_rank_score()
   end
 
   def part2(input) do
@@ -37,12 +32,12 @@ defmodule Aoc.Y2023.D7 do
     |> Enum.group_by(
       fn [cards, _] ->
         if String.contains?(cards, "J") do
-          cards_chars = cards |> String.to_charlist()
-
-          cards_chars
+          cards
+          |> String.to_charlist()
           |> Enum.uniq()
-          |> Enum.flat_map(fn new_c ->
-            [replace_with(cards_chars, new_c, []) |> determine_kind()]
+          |> Enum.map(fn
+            ?J -> determine_kind(cards)
+            new_c -> determine_kind(String.replace(cards, "J", <<new_c>>))
           end)
           |> Enum.max()
         else
@@ -64,6 +59,11 @@ defmodule Aoc.Y2023.D7 do
         |> Tuple.append(bid)
       end
     )
+    |> determine_rank_score()
+  end
+
+  def determine_rank_score(%{} = grouped) do
+    grouped
     |> Enum.flat_map(fn {kind, lst} -> lst |> Enum.map(&Tuple.insert_at(&1, 0, kind)) end)
     |> Enum.sort()
     |> Enum.reduce({0, 1}, fn {_kind, _, _, _, _, _, bid}, {acc, idx} ->
@@ -76,8 +76,6 @@ defmodule Aoc.Y2023.D7 do
   def replace_with([?J | cards], new, acc), do: replace_with(cards, new, [new | acc])
   def replace_with([c | cards], new, acc), do: replace_with(cards, new, [c | acc])
 
-  # @faces [?A, ?K, ?Q, ?J, ?T | Enum.to_list(?9..?2)]
-  # @faces_joker [?A, ?K, ?Q, ?T | Enum.to_list(?9..?2)]
   def determine_kind(cards) when is_binary(cards),
     do: determine_kind(cards |> String.to_charlist() |> Enum.sort(), 0)
 
