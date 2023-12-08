@@ -42,18 +42,11 @@ defmodule Aoc.Y2023.D8 do
           right::binary-size(3),
           _::binary
         >> ->
-          # :ets.update_element(table, node, {left, right})
           :ets.insert(table, {node, left, right})
       end,
       ordered: false
     )
     |> Enum.to_list()
-
-    # |> Task.await_many()
-
-    # :ets.tab2list(table) |> dbg
-
-    # :ets.lookup_element(table, "AAA", 2) |> dbg
 
     [directions |> String.to_charlist(), table]
   end
