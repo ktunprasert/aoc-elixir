@@ -4,7 +4,7 @@ defmodule Aoc.Y2023.D8 do
   import Aoc.Util
 
   def part1(input) do
-    [directions, table] = helper(input)
+    [directions, table, _] = helper(input)
 
     Stream.cycle(directions)
     |> Enum.reduce_while({1, "AAA"}, fn dir, {acc, key} ->
@@ -16,7 +16,22 @@ defmodule Aoc.Y2023.D8 do
   end
 
   def part2(input) do
-    :ok
+    [directions, table, starts_table] = helper(input)
+
+    starts = :ets.lookup(starts_table, :key) |> Enum.map(&elem(&1, 1))
+    dir_stream = Stream.cycle(directions)
+
+    starts
+    |> Enum.map(fn node ->
+      dir_stream
+      |> Enum.reduce_while({1, node}, fn dir, {acc, key} ->
+        case :ets.lookup_element(table, key, k(dir)) do
+          <<_::16, "Z">> -> {:halt, acc}
+          new -> {:cont, {acc + 1, new}}
+        end
+      end)
+    end)
+    |> Enum.reduce(fn x, y -> div(x * y, Integer.gcd(x, y)) end)
   end
 
   def k(?L), do: 2
@@ -30,6 +45,7 @@ defmodule Aoc.Y2023.D8 do
       input |> parse_lines("\n\n")
 
     table = :ets.new(:words, [:public, write_concurrency: true])
+    starts = :ets.new(:starts, [:public, :duplicate_bag])
 
     Task.async_stream(
       nodes |> parse_lines(),
@@ -43,11 +59,15 @@ defmodule Aoc.Y2023.D8 do
           _::binary
         >> ->
           :ets.insert(table, {node, left, right})
+
+          with <<_, _, "A">> = node <- node do
+            :ets.insert(starts, {:key, node})
+          end
       end,
       ordered: false
     )
     |> Enum.to_list()
 
-    [directions |> String.to_charlist(), table]
+    [directions |> String.to_charlist(), table, starts]
   end
 end
