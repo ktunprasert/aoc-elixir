@@ -74,10 +74,6 @@ defmodule Aoc.Y2023.D7 do
     |> elem(0)
   end
 
-  def replace_with([], _new, acc), do: acc
-  def replace_with([?J | cards], new, acc), do: replace_with(cards, new, [new | acc])
-  def replace_with([c | cards], new, acc), do: replace_with(cards, new, [c | acc])
-
   def determine_kind(cards) when is_binary(cards),
     do: determine_kind(cards |> String.to_charlist() |> Enum.sort(), 0)
 
