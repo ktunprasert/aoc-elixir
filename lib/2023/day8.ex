@@ -18,7 +18,7 @@ defmodule Aoc.Y2023.D8 do
   def part2(input) do
     [directions, table, starts_table] = helper(input)
 
-    starts = :ets.lookup(starts_table, :key) |> Enum.map(&elem(&1, 1))
+    starts = :ets.lookup_element(starts_table, :key, 2)
     dir_stream = Stream.cycle(directions)
 
     starts
@@ -27,7 +27,7 @@ defmodule Aoc.Y2023.D8 do
       |> Enum.reduce_while({1, node}, fn dir, {acc, key} ->
         case :ets.lookup_element(table, key, k(dir)) do
           <<_::16, "Z">> -> {:halt, acc}
-          new -> {:cont, {acc + 1, new}}
+          next -> {:cont, {acc + 1, next}}
         end
       end)
     end)
@@ -50,14 +50,7 @@ defmodule Aoc.Y2023.D8 do
     Task.async_stream(
       nodes |> parse_lines(),
       fn
-        <<
-          node::binary-size(3),
-          _::binary-size(4),
-          left::binary-size(3),
-          _::binary-size(2),
-          right::binary-size(3),
-          _::binary
-        >> ->
+        <<node::binary-3, _::binary-4, left::binary-3, _::binary-2, right::binary-3, _::binary>> ->
           :ets.insert(table, {node, left, right})
 
           with <<_, _, "A">> = node <- node do
