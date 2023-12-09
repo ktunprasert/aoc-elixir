@@ -8,16 +8,9 @@ defmodule Aoc.Y2023.D9 do
     |> helper
     |> Enum.reduce(0, fn nums, acc ->
       nums
-      |> Stream.unfold(fn
-        nums ->
-          case Enum.all?(nums, &(&1 == 0)) do
-            true -> nil
-            _ -> {nums, generate_diffs(nums, [])}
-          end
-      end)
-      |> Stream.map(fn lst -> List.last(lst) end)
+      |> generate_all_diffs(&List.last/1)
       |> Enum.sum()
-      |> then(&(&1 + acc))
+      |> Kernel.+(acc)
     end)
   end
 
@@ -26,30 +19,28 @@ defmodule Aoc.Y2023.D9 do
     |> helper
     |> Enum.reduce(0, fn nums, acc ->
       nums
-      |> Stream.unfold(fn
-        nums ->
-          case Enum.all?(nums, &(&1 == 0)) do
-            true -> nil
-            _ -> {nums, generate_diffs(nums, [])}
-          end
-      end)
-      |> Stream.flat_map(fn [h | _t] -> [h] end)
-      |> Enum.reverse()
-      |> Enum.reduce(fn x, y -> x - y end)
-      |> then(&acc + &1)
+      |> generate_all_diffs(&hd/1)
+      |> Enum.reduce(&-/2)
+      |> Kernel.+(acc)
     end)
+    |> Kernel.*(-1)
   end
 
-  def generate_diffs([], acc), do: acc |> Enum.reverse()
-  def generate_diffs([_], acc), do: acc |> Enum.reverse()
-
-  def generate_diffs([a, b | nums], acc) do
-    generate_diffs([b | nums], [b - a | acc])
+  def generate_all_diffs(nums, access_fn) do
+    nums
+    |> Stream.iterate(&generate_diffs/1)
+    |> Stream.take_while(&!Enum.all?(&1, fn x -> x == 0 end))
+    |> Stream.map(&access_fn.(&1))
   end
+
+  def generate_diffs(lst), do: generate_diffs(lst, [])
+  def generate_diffs([a, b | nums], acc), do: generate_diffs([b | nums], [b - a | acc])
+  def generate_diffs(_, acc), do: acc |> Enum.reverse()
 
   def helper(input) do
     input
     |> parse_lines()
-    |> Stream.map(&(String.split(&1) |> Enum.map(fn x -> String.to_integer(x) end)))
+    |> Stream.map(&String.split/1)
+    |> Stream.map(fn lst -> Enum.map(lst, &String.to_integer/1) end)
   end
 end
