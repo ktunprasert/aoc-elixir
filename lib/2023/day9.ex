@@ -20,16 +20,16 @@ defmodule Aoc.Y2023.D9 do
     |> Enum.reduce(0, fn nums, acc ->
       nums
       |> generate_all_diffs(&hd/1)
+      |> Enum.reverse()
       |> Enum.reduce(&-/2)
       |> Kernel.+(acc)
     end)
-    |> Kernel.*(-1)
   end
 
   def generate_all_diffs(nums, access_fn) do
     nums
     |> Stream.iterate(&generate_diffs/1)
-    |> Stream.take_while(&!Enum.all?(&1, fn x -> x == 0 end))
+    |> Stream.take_while(&(!Enum.all?(&1, fn x -> x == 0 end)))
     |> Stream.map(&access_fn.(&1))
   end
 
