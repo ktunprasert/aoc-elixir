@@ -10,7 +10,7 @@ defmodule Aoc.Y2023.D9 do
       nums
       |> Stream.unfold(fn
         nums ->
-          case Enum.all?(nums, & &1 == 0) do
+          case Enum.all?(nums, &(&1 == 0)) do
             true -> nil
             _ -> {nums, generate_diffs(nums, [])}
           end
@@ -22,7 +22,22 @@ defmodule Aoc.Y2023.D9 do
   end
 
   def part2(input) do
-    :ok
+    input
+    |> helper
+    |> Enum.reduce(0, fn nums, acc ->
+      nums
+      |> Stream.unfold(fn
+        nums ->
+          case Enum.all?(nums, &(&1 == 0)) do
+            true -> nil
+            _ -> {nums, generate_diffs(nums, [])}
+          end
+      end)
+      |> Stream.flat_map(fn [h | _t] -> [h] end)
+      |> Enum.reverse()
+      |> Enum.reduce(fn x, y -> x - y end)
+      |> then(&acc + &1)
+    end)
   end
 
   def generate_diffs([], acc), do: acc |> Enum.reverse()
@@ -35,6 +50,6 @@ defmodule Aoc.Y2023.D9 do
   def helper(input) do
     input
     |> parse_lines()
-    |> Enum.map(&(String.split(&1) |> Enum.map(fn x -> String.to_integer(x) end)))
+    |> Stream.map(&(String.split(&1) |> Enum.map(fn x -> String.to_integer(x) end)))
   end
 end
