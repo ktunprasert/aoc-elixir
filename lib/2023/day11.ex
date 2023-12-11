@@ -36,8 +36,7 @@ defmodule Aoc.Y2023.D11 do
   end
 
   def manhattan_dist(a, b) when a < b, do: b - a
-  def manhattan_dist(a, b) when a > b, do: a - b
-  def manhattan_dist(_, _), do: 0
+  def manhattan_dist(a, b) when a >= b, do: a - b
 
   def helper(input) do
     galaxies =
@@ -58,10 +57,12 @@ defmodule Aoc.Y2023.D11 do
     lines = input |> parse_lines()
     max_len = lines |> length()
 
-    0..(max_len - 1)
-    |> Enum.each(fn n ->
-      :ets.insert(doubles, {:x, n})
-      :ets.insert(doubles, {:y, n})
+    0..max_len - 1
+    |> Enum.flat_map(fn n -> [{:x, n}, {:y, n}] end)
+    |> Enum.group_by(fn {key, _} -> key end)
+    |> then(fn %{x: xs, y: ys} ->
+      :ets.insert(doubles, xs)
+      :ets.insert(doubles, ys)
     end)
 
     no = :atomics.new(1, [])
@@ -73,16 +74,13 @@ defmodule Aoc.Y2023.D11 do
     |> Stream.flat_map(fn {self, x} ->
       Enum.with_index(self, fn char, y -> {char, x, y} end)
     end)
-    |> Stream.dedup_by(fn {char, x, _} -> {char, x} end)
+    |> Stream.filter(fn {char, _, _} -> char == ?# end)
     |> Task.async_stream(fn
       {?#, x, y} ->
         n = get_no.(1)
         :ets.insert(galaxies, {{x, y}, n})
         :ets.match_delete(doubles, {:x, x})
         :ets.match_delete(doubles, {:y, y})
-
-      _ ->
-        nil
     end)
     |> Stream.run()
 
