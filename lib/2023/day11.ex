@@ -36,44 +36,40 @@ defmodule Aoc.Y2023.D11 do
   end
 
   def helper(input) do
-    galaxies = :ets.new(:galaxies, write_concurrency: true, read_concurrency: true)
+    galaxies = :ets.new(:galaxies, [:public, write_concurrency: true, read_concurrency: true])
     doubles = :ets.new(:doubles, [:public, :duplicate_bag])
 
-    rows =
-      input
-      |> parse_lines()
-      |> Stream.map(&String.to_charlist/1)
+    lines = input |> parse_lines()
+    max_len = lines |> length()
 
-    Stream.zip(rows)
+    0..(max_len - 1)
+    |> Enum.each(fn n ->
+      :ets.insert(doubles, {:x, n})
+      :ets.insert(doubles, {:y, n})
+    end)
+
+    no = :atomics.new(1, [])
+    get_no = fn x -> :atomics.add_get(no, 1, x) end
+
+    lines
+    |> Stream.map(&String.to_charlist/1)
     |> Stream.with_index()
-    |> Task.async_stream(fn {line, y} ->
-      if line
-         |> Tuple.to_list()
-         |> Enum.all?(&(&1 == ?.)) do
-        :ets.insert(doubles, {:y, y})
-      end
+    |> Task.async_stream(fn {line, x} ->
+      line
+      |> Stream.with_index()
+      |> Enum.each(fn
+        {?#, y} ->
+          n = get_no.(1)
+          :ets.insert(galaxies, {{x, y}, n})
+          :ets.match_delete(doubles, {:x, x})
+          :ets.match_delete(doubles, {:y, y})
+          n
+
+        _ ->
+          get_no.(0)
+      end)
     end)
     |> Stream.run()
-
-    rows
-    |> Stream.with_index()
-    |> Enum.reduce(1, fn {line, x}, no ->
-      if Enum.all?(line, &(&1 == ?.)) do
-        :ets.insert(doubles, {:x, x})
-        no
-      else
-        line
-        |> Stream.with_index()
-        |> Enum.reduce(no, fn
-          {?#, y}, n ->
-            :ets.insert(galaxies, {{x, y}, n})
-            n + 1
-
-          _, n ->
-            n
-        end)
-      end
-    end)
 
     {galaxies, doubles}
   end
