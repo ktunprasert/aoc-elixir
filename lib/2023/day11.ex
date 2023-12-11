@@ -10,11 +10,11 @@ defmodule Aoc.Y2023.D11 do
 
     coords = :ets.tab2list(galaxies)
 
-    x_double = :ets.lookup_element(doubles, :x, 2)
-    y_double = :ets.lookup_element(doubles, :y, 2)
+    x_double = :ets.lookup_element(doubles, :x, 2) |> MapSet.new()
+    y_double = :ets.lookup_element(doubles, :y, 2) |> MapSet.new()
 
-    Stream.flat_map(coords, fn {pos1, fst} ->
-      Stream.flat_map(coords, fn {pos2, snd} ->
+    Enum.flat_map(coords, fn {pos1, fst} ->
+      Enum.flat_map(coords, fn {pos2, snd} ->
         if fst < snd do
           [[pos1, pos2]]
         else
@@ -45,7 +45,6 @@ defmodule Aoc.Y2023.D11 do
         :public,
         write_concurrency: true,
         read_concurrency: true,
-        decentralized_counters: true
       ])
 
     doubles =
@@ -54,7 +53,6 @@ defmodule Aoc.Y2023.D11 do
         :duplicate_bag,
         write_concurrency: true,
         read_concurrency: true,
-        decentralized_counters: true
       ])
 
     lines = input |> parse_lines()
@@ -70,8 +68,8 @@ defmodule Aoc.Y2023.D11 do
     get_no = fn x -> :atomics.add_get(no, 1, x) end
 
     lines
-    |> Stream.map(&String.to_charlist/1)
-    |> Stream.with_index()
+    |> Enum.map(&String.to_charlist/1)
+    |> Enum.with_index()
     |> Stream.flat_map(fn {self, x} ->
       Enum.with_index(self, fn char, y -> {char, x, y} end)
     end)
