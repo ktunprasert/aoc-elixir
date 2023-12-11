@@ -3,7 +3,7 @@ defmodule Aoc.Y2023.D11 do
 
   import Aoc.Util
 
-  def part1(input) do
+  def part1(input, empty_len \\ 2) do
     {galaxies, doubles} =
       input
       |> helper()
@@ -23,16 +23,16 @@ defmodule Aoc.Y2023.D11 do
       end)
     end)
     |> Task.async_stream(fn [{x1, y1}, {x2, y2}] ->
-      dist_x = Range.size(x1..x2) + Enum.count(x_double, &(&1 in x1..x2)) - 1
-      dist_y = Range.size(y1..y2) + Enum.count(y_double, &(&1 in y1..y2)) - 1
+      dist_x = Range.size(x1..x2) + Enum.count(x_double, &(&1 in x1..x2)) * (empty_len - 1) - 1
+      dist_y = Range.size(y1..y2) + Enum.count(y_double, &(&1 in y1..y2)) * (empty_len - 1) - 1
 
       dist_x + dist_y
     end)
     |> Enum.reduce(0, fn {:ok, n}, acc -> acc + n end)
   end
 
-  def part2(input) do
-    :ok
+  def part2(input, empty_len \\ 1_000_000) do
+    part1(input, empty_len)
   end
 
   def helper(input) do
