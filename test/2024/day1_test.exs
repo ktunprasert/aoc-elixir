@@ -18,7 +18,7 @@ defmodule AocTest.Y2024.D1 do
     end
 
     test "part 2" do
-      assert Solver.part2(@example) == :ok
+      assert Solver.part2(@example) == 31
     end
   end
 end
