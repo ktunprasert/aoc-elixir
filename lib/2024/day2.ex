@@ -6,58 +6,42 @@ defmodule Aoc.Y2024.D2 do
   def part1(input) do
     input
     |> helper()
-    |> Enum.count(&is_safe?(&1, false))
+    |> Enum.count(&is_safe?(&1))
   end
 
   def part2(input) do
     input
     |> helper()
-    |> Enum.map(fn lst ->
-      0..(length(lst) - 1)
-      |> Enum.map(fn x -> List.delete_at(lst, x) end)
-      |> Enum.uniq()
-    end)
     |> Enum.count(fn lst ->
-      Stream.map(lst, fn l -> is_safe?(l, false) end)
+      0..(length(lst) - 1)
+      |> Stream.map(&List.delete_at(lst, &1))
+      |> Stream.dedup()
+      |> Stream.map(fn l -> is_safe?(l) end)
       |> Enum.any?(& &1)
     end)
   end
 
-  def is_safe?(lst, can_remove?) do
+  def is_safe?(lst) do
     a = Enum.at(lst, 0)
     b = Enum.at(lst, -1)
 
     cond do
-      a > b -> is_safe?(lst, -1, can_remove?, :dec)
-      a < b -> is_safe?(lst, -1, can_remove?, :inc)
+      a > b -> is_safe?(lst, :dec)
+      a < b -> is_safe?(lst, :inc)
       true -> false
     end
   end
 
-  def is_safe?(lst, _, _, _) when length(lst) < 2, do: true
+  def is_safe?(lst, _) when length(lst) < 2, do: true
 
-  def is_safe?([a, b | rest], prev, can_remove?, direction) do
-    safe? = is_safe?(a, b, direction)
-
-    cond do
-      safe? ->
-        is_safe?([b | rest], a, can_remove?, direction)
-
-      can_remove? ->
-        case rest do
-          [c | rest] -> is_safe?(a, c, direction) && is_safe?([c | rest], prev, false, direction)
-          [] -> true
-        end
-
-      true ->
-        false
-    end
+  def is_safe?([a, b | rest], direction) do
+    cmp(a, b, direction) && is_safe?([b | rest], direction)
   end
 
-  def is_safe?(a, a, _), do: false
-  def is_safe?(a, b, :inc), do: a < b and b - a <= 3
-  def is_safe?(a, b, :dec), do: a > b and a - b <= 3
-  def is_safe?(_, _, _), do: false
+  def cmp(a, a, _), do: false
+  def cmp(a, b, :inc), do: a < b and b - a <= 3
+  def cmp(a, b, :dec), do: a > b and a - b <= 3
+  def cmp(_, _, _), do: false
 
   def helper(input) do
     input
