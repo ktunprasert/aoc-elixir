@@ -12,41 +12,37 @@ defmodule Aoc.Y2024.D1 do
   end
 
   def solve(input, part) do
-    parsed =
-      {l, r} =
+    {l, r} =
       input
       |> helper
-      |> Enum.with_index()
-      |> Enum.split_with(fn {_, index} ->
-        rem(index, 2) == 0
-      end)
+      |> split_odd_even()
 
     with :part1 <- part do
-      parsed
-      |> Tuple.to_list()
+      [l, r]
       |> Enum.map(&Enum.sort/1)
       |> Enum.zip()
-      |> Enum.map(fn {{first, _}, {second, _}} ->
-        abs(first - second)
+      |> Enum.map(fn {l, r} ->
+        abs(l - r)
       end)
       |> Enum.sum()
     else
       :part2 ->
-        count =
-          r
-          |> Enum.group_by(&elem(&1, 0))
-          |> Enum.map(fn {k, v} -> {k, v |> Enum.count()} end)
-          |> Enum.into(%{})
-
         l
-        |> Enum.map(fn {v, _} ->
-          case count[v] do
-            nil -> 0
-            counted -> v * counted
+        |> Enum.reduce({r |> Enum.frequencies(), 0}, fn n, {map, sum} ->
+          case map[n] do
+            nil -> {map, sum}
+            counted -> {map, sum + n * counted}
           end
         end)
-        |> Enum.sum()
+        |> elem(1)
     end
+  end
+
+  def split_odd_even(lst), do: split_odd_even(lst, [], [])
+  def split_odd_even([], left, right), do: {left, right}
+
+  def split_odd_even([a, b | rest], left, right) do
+    split_odd_even(rest, [a | left], [b | right])
   end
 
   def helper(input) do
