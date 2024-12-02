@@ -18,7 +18,18 @@ defmodule AocTest.Y2024.D2 do
     end
 
     test "part 2" do
-      assert Solver.part2(@example) == :ok
+      assert Solver.part2(@example) == 4
+    end
+
+    test "part 2: double dupes" do
+      assert Solver.part2("1 1 1 1 1") == 0
+      assert Solver.part2("2 2 3 3 4") == 0
+
+      assert Solver.part2("1 2 2 3 4") == 1
+      assert Solver.part2("1 2 3 4 4") == 1
+      assert Solver.part2("1 1 2 3 4") == 1
+
+      assert Solver.part2("1 2 7 3 4") == 1
     end
   end
 end
