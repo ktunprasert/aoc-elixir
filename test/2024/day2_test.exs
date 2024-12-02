@@ -29,7 +29,7 @@ defmodule AocTest.Y2024.D2 do
       assert Solver.part2("1 2 3 4 4") == 1
       assert Solver.part2("1 1 2 3 4") == 1
 
-      assert Solver.part2("1 2 7 3 4") == 1
+      assert Solver.part2("1 2 7 3 4\n") == 1
     end
   end
 end

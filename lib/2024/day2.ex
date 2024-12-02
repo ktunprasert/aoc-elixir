@@ -12,7 +12,15 @@ defmodule Aoc.Y2024.D2 do
   def part2(input) do
     input
     |> helper()
-    |> Enum.count(&is_safe?(&1, true))
+    |> Enum.map(fn lst ->
+      0..(length(lst) - 1)
+      |> Enum.map(fn x -> List.delete_at(lst, x) end)
+      |> Enum.uniq()
+    end)
+    |> Enum.count(fn lst ->
+      Stream.map(lst, fn l -> is_safe?(l, false) end)
+      |> Enum.any?(& &1)
+    end)
   end
 
   def is_safe?(lst, can_remove?) do
@@ -30,7 +38,6 @@ defmodule Aoc.Y2024.D2 do
 
   def is_safe?([a, b | rest], prev, can_remove?, direction) do
     safe? = is_safe?(a, b, direction)
-    dbg {[a, b | rest], prev, can_remove?, direction}
 
     cond do
       safe? ->
@@ -41,6 +48,7 @@ defmodule Aoc.Y2024.D2 do
           [c | rest] -> is_safe?(a, c, direction) && is_safe?([c | rest], prev, false, direction)
           [] -> true
         end
+
       true ->
         false
     end
