@@ -16,18 +16,14 @@ defmodule Aoc.Y2024.D3 do
       :part1 ->
         ~r/mul\((\d{1,3}),(\d{1,3})\)/
         |> Regex.scan(input)
-        |> Enum.map(&tl/1)
-        |> Enum.map(fn lst -> lst |> Enum.map(&String.to_integer/1) |> Enum.product() end)
-        |> Enum.sum()
 
       :part2 ->
         ~r/(?:mul\((\d{1,3}),(\d{1,3})\))|(?:do(?:n't)?\(\))/
         |> Regex.scan(input)
         |> find_usable()
-        |> Enum.map(&tl/1)
-        |> Enum.map(fn lst -> lst |> Enum.map(&String.to_integer/1) |> Enum.product() end)
-        |> Enum.sum()
     end
+    |> Enum.map(fn lst -> lst |> tl() |> Enum.map(&String.to_integer/1) |> Enum.product() end)
+    |> Enum.sum()
   end
 
   def find_usable(lst), do: find_usable(lst, [])
