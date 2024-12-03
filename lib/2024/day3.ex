@@ -23,7 +23,6 @@ defmodule Aoc.Y2024.D3 do
       :part2 ->
         ~r/(?:mul\((\d{1,3}),(\d{1,3})\))|(?:do(?:n't)?\(\))/
         |> Regex.scan(input)
-        |> (&[["do()"] | &1]).()
         |> find_usable()
         |> Enum.map(&tl/1)
         |> Enum.map(fn lst -> lst |> Enum.map(&String.to_integer/1) |> Enum.product() end)
